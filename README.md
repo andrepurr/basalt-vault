@@ -1,12 +1,4 @@
-<p align="center">
-  <img src="docs/basalt-logo.svg" width="80" alt="Basalt Vault" />
-</p>
-
-<h1 align="center">Basalt Vault</h1>
-
-<p align="center">
-  Delta-neutral yield vault on Arbitrum
-</p>
+![Basalt Vault](./resources/banner.png)
 
 <p align="center">
   <img src="https://img.shields.io/badge/Arbitrum_One-28A0F0?style=flat&logo=arbitrum&logoColor=white" alt="Arbitrum" />
