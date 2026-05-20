@@ -1,19 +1,5 @@
 # Security
 
-## Reporting Vulnerabilities
-
-If you discover a security vulnerability in the Basalt Vault protocol, please report it responsibly.
-
-**Email:** security@btva.io
-
-Please include:
-- Description of the vulnerability and its potential impact
-- Steps to reproduce or a proof of concept
-- Your suggested severity classification (Critical / High / Medium / Low)
-
-We will acknowledge receipt within 48 hours and aim to provide an initial assessment within 5 business days. Do not disclose the vulnerability publicly until we have coordinated a fix or determined it is not exploitable.
-
----
 
 ## 1. Architecture Overview
 
