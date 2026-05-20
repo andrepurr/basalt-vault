@@ -11,6 +11,9 @@
 
 ## What It Is
 
+> **Backtested over 2 years of on-chain data: 19.7% APY, -5.7% max drawdown, 2 rebalances.** See [docs/BACKTESTS.md](docs/BACKTESTS.md).
+
+
 Basalt Vault earns yield from the GMX v2 GM BTC/USDC pool while fully hedging BTC price exposure. Deposit USDC, earn delta-neutral yield from your own isolated vault.
 
 1. **Deposits GM tokens** as collateral on Dolomite Margin (lending protocol on Arbitrum)
