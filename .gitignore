@@ -65,7 +65,7 @@ web/tmp/
 web/design-system-ref/
 
 # === Screenshots and debug images ===
-*.png
+# *.png
 -L
 
 # === Fix tracking (local only) ===
