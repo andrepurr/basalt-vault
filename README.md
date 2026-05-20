@@ -123,6 +123,8 @@ Irreversible last resort. Position is unwound in chunks with decaying slippage. 
 
 ## Security
 
+Full security model documentation: [SECURITY.md](SECURITY.md)
+
 ### Immutability
 
 All deployed contracts are immutable. There are no proxies, no admin upgrade paths, and no upgradeability patterns. Handler rotation is the only mutable surface: protocol manager proposes a new handler, and the vault NFT owner must explicitly accept it.
