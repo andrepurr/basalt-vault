@@ -76,7 +76,6 @@ contract GMCalculatorUnit is ForkSetupFull {
     //  GM PRICE
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice GM token has a positive price on the fork.
     function test_calcGmPriceUsdE18_returnsPositive() public view {
         GMCalculator.GmPriceParams memory p = _buildLiveParams();
         uint256 price = harness.calcGmPriceUsdE18(p);
@@ -85,7 +84,6 @@ contract GMCalculatorUnit is ForkSetupFull {
         assertLt(price, type(uint256).max / 2, "GM price should be bounded");
     }
 
-    /// @notice GM price is in a reasonable range: $0.50 to $10 per token at E18 scale.
     function test_calcGmPriceUsdE18_returnsReasonableRange() public view {
         GMCalculator.GmPriceParams memory p = _buildLiveParams();
         uint256 price = harness.calcGmPriceUsdE18(p);
@@ -97,7 +95,6 @@ contract GMCalculatorUnit is ForkSetupFull {
     //  POOL VALUE
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice GMX pool has positive value on the fork.
     function test_calcPoolValue_returnsPositive() public view {
         GMCalculator.GmPriceParams memory p = _buildLiveParams();
         int256 poolValue = harness.calcPoolValue(p);
@@ -106,7 +103,6 @@ contract GMCalculatorUnit is ForkSetupFull {
         assertGt(poolValue, int256(1e35), "pool value should be > $100k at E30 scale");
     }
 
-    /// @notice Pool value is in millions-to-billions USD range at E30 scale.
     ///         $1M at E30 = 1e6 * 1e30 = 1e36. $10B = 1e40.
     function test_calcPoolValue_matchesExpectedMagnitude() public view {
         GMCalculator.GmPriceParams memory p = _buildLiveParams();

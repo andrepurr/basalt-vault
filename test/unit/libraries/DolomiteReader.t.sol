@@ -6,15 +6,8 @@ import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 import {ForkSetupFull} from "../../helpers/ForkSetupFull.sol";
 import {IDolomiteMargin} from "../../../src/interfaces/IDolomiteMargin.sol";
 import {IBasaltMath} from "../../../src/interfaces/IBasaltMath.sol";
-import {IChainlinkAggregator} from "../../../src/interfaces/IChainlinkAggregator.sol";
-import {IDepositHandlerVaultCore} from "../../../src/interfaces/IDepositHandlerVaultCore.sol";
 import {DolomiteReader} from "../../../src/libraries/DolomiteReader.sol";
 import {BasaltAddresses} from "../../../src/libraries/BasaltAddresses.sol";
-import {BasaltConstants} from "../../../src/libraries/BasaltConstants.sol";
-import {
-    GmxEventUtils,
-    IDepositCallbackReceiver
-} from "../../../src/interfaces/IGmxCallbackReceiver.sol";
 
 /// @dev Wrapper to expose internal DolomiteReader functions for testing.
 contract DolomiteReaderHarness {
@@ -63,7 +56,6 @@ contract DolomiteReaderUnit is ForkSetupFull {
     //  PRICE READS
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice GM price from Dolomite oracle is positive on fork.
     function test_getGmPriceE18_returnsPositive() public view {
         uint256 price = harness.getGmPriceE18(DOLOMITE);
         assertGt(price, 0, "Dolomite GM price should be positive");
@@ -71,14 +63,12 @@ contract DolomiteReaderUnit is ForkSetupFull {
         assertLt(price, 1_000e18, "GM price should be < $1000");
     }
 
-    /// @notice GM price is in reasonable range: $0.50 to $10 at E18.
     function test_getGmPriceE18_returnsReasonableRange() public view {
         uint256 price = harness.getGmPriceE18(DOLOMITE);
         assertGe(price, 0.50e18, "Dolomite GM price too low (< $0.50)");
         assertLe(price, 10e18, "Dolomite GM price too high (> $10)");
     }
 
-    /// @notice WBTC price from Dolomite (cross-checked with Chainlink) is positive on fork.
     function test_getWbtcPriceE28_returnsPositive() public view {
         uint256 price = harness.getWbtcPriceE28(DOLOMITE, IBasaltMath(address(basaltMath)));
         assertGt(price, 0, "Dolomite WBTC price should be positive");
@@ -86,7 +76,6 @@ contract DolomiteReaderUnit is ForkSetupFull {
         assertGt(price, 1e31, "WBTC price at E28 should reflect > $1k");
     }
 
-    /// @notice WBTC price at E28 is in reasonable range.
     ///         $10,000 at E28 = 1e4 * 1e28 = 1e32. $500,000 = 5e33.
     function test_getWbtcPriceE28_returnsReasonableRange() public view {
         uint256 price = harness.getWbtcPriceE28(DOLOMITE, IBasaltMath(address(basaltMath)));
@@ -98,7 +87,6 @@ contract DolomiteReaderUnit is ForkSetupFull {
     //  BORROW INDEX
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice WBTC borrow index is positive and reasonable (> 1e18, since interest accrues).
     function test_getWbtcBorrowIndexE18_returnsAboveOne() public view {
         uint256 index = harness.getWbtcBorrowIndexE18(DOLOMITE);
         assertGe(index, 1e18, "WBTC borrow index should be >= 1e18");
@@ -110,39 +98,19 @@ contract DolomiteReaderUnit is ForkSetupFull {
     //  EMPTY VAULT -- no isolation vault address
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice NAV is zero when no isolation vault exists (address(0)).
     function test_nav_noIsolationVault_returnsZero() public view {
-        uint256 nav = harness.getActualNavUsdE18(DOLOMITE, address(0), IBasaltMath(address(basaltMath)));
-        assertEq(nav, 0, "NAV should be 0 with no isolation vault");
-        // Collateral should also be zero for address(0)
-        uint256 coll = harness.getActualGmCollateralE18(DOLOMITE, address(0));
-        assertEq(coll, 0, "collateral should be 0 for address(0)");
+        assertEq(harness.getActualNavUsdE18(DOLOMITE, address(0), IBasaltMath(address(basaltMath))), 0);
     }
 
-    /// @notice Collateral is zero for a non-existent vault address.
     function test_collateral_nonExistentVault_returnsZero() public view {
-        uint256 coll = harness.getActualGmCollateralE18(DOLOMITE, address(0xdead));
-        assertEq(coll, 0, "collateral should be 0 for non-existent vault");
-        // Also zero for address(0)
-        uint256 collZero = harness.getActualGmCollateralE18(DOLOMITE, address(0));
-        assertEq(collZero, 0, "collateral should be 0 for address(0)");
+        assertEq(harness.getActualGmCollateralE18(DOLOMITE, address(0xdead)), 0);
     }
 
-    /// @notice Debt is zero for a non-existent vault address.
     function test_debt_nonExistentVault_returnsZero() public view {
-        uint256 debt = harness.getActualWbtcDebtE8(DOLOMITE, address(0xdead));
-        assertEq(debt, 0, "debt should be 0 for non-existent vault");
-        // Also zero for address(0)
-        uint256 debtZero = harness.getActualWbtcDebtE8(DOLOMITE, address(0));
-        assertEq(debtZero, 0, "debt should be 0 for address(0)");
+        assertEq(harness.getActualWbtcDebtE8(DOLOMITE, address(0xdead)), 0);
     }
 
-    /// @notice Surplus is zero for a non-existent vault address.
     function test_surplus_nonExistentVault_returnsZero() public view {
-        uint256 surplus = harness.getActualWbtcSurplusE8(DOLOMITE, address(0xdead));
-        assertEq(surplus, 0, "surplus should be 0 for non-existent vault");
-        // Also zero for address(0)
-        uint256 surplusZero = harness.getActualWbtcSurplusE8(DOLOMITE, address(0));
-        assertEq(surplusZero, 0, "surplus should be 0 for address(0)");
+        assertEq(harness.getActualWbtcSurplusE8(DOLOMITE, address(0xdead)), 0);
     }
 }

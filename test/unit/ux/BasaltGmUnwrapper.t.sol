@@ -55,7 +55,6 @@ contract BasaltGmUnwrapperUnit is ForkSetupFull {
     //  PERMISSIONLESS ACCESS
     // -----------------------------------------------------------------------
 
-    /// @notice Stranger can call unwrap -- no auth gating (ACL-04).
     function test_unwrap_asStranger_doesNotRevertOnAuth() public {
         _fundActor(stranger);
         _fundAndApproveGm(stranger, TYPICAL_GM_AMOUNT);
@@ -71,7 +70,6 @@ contract BasaltGmUnwrapperUnit is ForkSetupFull {
     //  ENTRY POINT -- unwrap with GM tokens
     // -----------------------------------------------------------------------
 
-    /// @notice unwrap with funded GM tokens returns a request key and pulls GM from caller.
     function test_unwrap_withGmTokens_initiatesWithdrawal() public {
         _fundActor(stranger);
         _fundAndApproveGm(stranger, TYPICAL_GM_AMOUNT);
@@ -86,7 +84,6 @@ contract BasaltGmUnwrapperUnit is ForkSetupFull {
         assertEq(gmAfter, gmBefore - TYPICAL_GM_AMOUNT, "unwrap should pull exact GM amount from caller");
     }
 
-    /// @notice unwrap emits GmUnwrapSubmitted event with correct user.
     function test_unwrap_emitsEvent() public {
         _fundActor(stranger);
         _fundAndApproveGm(stranger, TYPICAL_GM_AMOUNT);
@@ -104,7 +101,6 @@ contract BasaltGmUnwrapperUnit is ForkSetupFull {
     //  ZERO AMOUNT
     // -----------------------------------------------------------------------
 
-    /// @notice unwrap with zero GM amount reverts with ZeroAmount.
     function test_unwrap_zeroAmount_reverts() public {
         _fundActor(stranger);
         uint256 ethBefore = stranger.balance;
@@ -119,7 +115,6 @@ contract BasaltGmUnwrapperUnit is ForkSetupFull {
     //  MISSING EXECUTION FEE
     // -----------------------------------------------------------------------
 
-    /// @notice unwrap with zero msg.value reverts with MissingExecutionFee.
     function test_unwrap_zeroMsgValue_reverts() public {
         _fundActor(stranger);
         _fundAndApproveGm(stranger, TYPICAL_GM_AMOUNT);
@@ -136,7 +131,6 @@ contract BasaltGmUnwrapperUnit is ForkSetupFull {
     //  INSUFFICIENT BALANCE
     // -----------------------------------------------------------------------
 
-    /// @notice unwrap without GM balance reverts (SafeERC20 transfer failure).
     function test_unwrap_insufficientBalance_reverts() public {
         _fundActor(stranger);
         assertEq(gmToken.balanceOf(stranger), 0, "stranger should have zero GM before test");
@@ -152,7 +146,6 @@ contract BasaltGmUnwrapperUnit is ForkSetupFull {
     //  SLIPPAGE
     // -----------------------------------------------------------------------
 
-    /// @notice Slippage of zero reverts with InvalidSlippage.
     function test_unwrap_zeroSlippage_reverts() public {
         _fundActor(stranger);
         _fundAndApproveGm(stranger, TYPICAL_GM_AMOUNT);
@@ -165,7 +158,6 @@ contract BasaltGmUnwrapperUnit is ForkSetupFull {
         assertEq(gmToken.balanceOf(stranger), gmBefore, "GM unchanged after slippage revert");
     }
 
-    /// @notice Slippage above MAX_SLIPPAGE_BPS (50%) reverts with InvalidSlippage.
     function test_unwrap_slippageAboveMax_reverts() public {
         _fundActor(stranger);
         _fundAndApproveGm(stranger, TYPICAL_GM_AMOUNT);
@@ -177,7 +169,6 @@ contract BasaltGmUnwrapperUnit is ForkSetupFull {
         gmUnwrapper.unwrap{value: EXEC_FEE}(TYPICAL_GM_AMOUNT, aboveMax);
     }
 
-    /// @notice Slippage at exactly MAX_SLIPPAGE_BPS boundary succeeds.
     function test_unwrap_slippageAtMax_succeeds() public {
         _fundActor(stranger);
         _fundAndApproveGm(stranger, TYPICAL_GM_AMOUNT);
@@ -196,7 +187,6 @@ contract BasaltGmUnwrapperUnit is ForkSetupFull {
     //  LEG CALCULATION
     // -----------------------------------------------------------------------
 
-    /// @notice For a small GM amount, the min leg amounts are reasonable
     ///         (non-zero and proportional to pool composition).
     function test_unwrap_calculatesCorrectLegs() public {
         _fundActor(stranger);
@@ -234,7 +224,6 @@ contract BasaltGmUnwrapperUnit is ForkSetupFull {
     //  IMMUTABLES
     // -----------------------------------------------------------------------
 
-    /// @notice Constructor stores correct immutable addresses.
     function test_constructor_setsImmutables() public view {
         assertEq(address(gmUnwrapper.GMX_EXCHANGE_ROUTER()), BasaltAddresses.GMX_EXCHANGE_ROUTER, "GMX_EXCHANGE_ROUTER mismatch");
         assertEq(gmUnwrapper.GMX_ROUTER(), BasaltAddresses.GMX_V2_ROUTER, "GMX_ROUTER mismatch");

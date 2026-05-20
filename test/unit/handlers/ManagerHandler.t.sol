@@ -65,7 +65,6 @@ contract ManagerHandlerUnit is ForkSetupFull {
     //  CONFIG SETTERS (Priority 3) -- via managerContract.onlyConfigurator
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice setVaultTargetLtv via configurator updates vaultState.
     function test_setTargetLtv_asConfigurator_updatesVaultState() public {
         uint256 newLtv = 5_100; // within [4800, 5200]
         vm.prank(configurator);
@@ -79,7 +78,6 @@ contract ManagerHandlerUnit is ForkSetupFull {
         assertLe(newLtv, BasaltConstants.MAX_TARGET_LTV_BPS, "new LTV should be <= MAX");
     }
 
-    /// @notice setVaultKeeperDeadline via configurator updates vaultState.
     function test_setKeeperDeadline_asConfigurator_updatesVaultState() public {
         uint256 newDeadline = 120; // within [60, 3600]
         vm.prank(configurator);
@@ -93,7 +91,6 @@ contract ManagerHandlerUnit is ForkSetupFull {
         assertLe(newDeadline, BasaltConstants.MAX_KEEPER_DEADLINE, "deadline <= MAX");
     }
 
-    /// @notice setVaultRebalanceSlippageCapBps via configurator updates vaultState.
     function test_setRebalanceSlippageCapBps_asConfigurator_updatesVaultState() public {
         uint256 newCap = 300; // within [100, 1000]
         vm.prank(configurator);
@@ -107,7 +104,6 @@ contract ManagerHandlerUnit is ForkSetupFull {
         assertLe(newCap, BasaltConstants.MAX_REBALANCE_SLIPPAGE_CAP_BPS, "cap <= MAX");
     }
 
-    /// @notice setVaultUnwrapLongShareBps via configurator updates vaultState.
     function test_setUnwrapLongShareBps_asConfigurator_updatesVaultState() public {
         uint256 newShare = 4_500; // within [4000, 5000]
         vm.prank(configurator);
@@ -121,7 +117,6 @@ contract ManagerHandlerUnit is ForkSetupFull {
         assertLe(newShare, BasaltConstants.MAX_UNWRAP_LONG_SHARE_BPS, "share <= MAX");
     }
 
-    /// @notice setVaultRebalanceThresholdUpBps via configurator updates vaultState.
     function test_setRebalanceThresholdUpBps_asConfigurator_updatesVaultState() public {
         uint256 newThresh = 1_000; // within [500, 2000]
         vm.prank(configurator);
@@ -135,7 +130,6 @@ contract ManagerHandlerUnit is ForkSetupFull {
         assertLe(newThresh, BasaltConstants.MAX_REBALANCE_THRESHOLD_BPS, "threshold <= MAX");
     }
 
-    /// @notice setVaultRebalanceThresholdDownBps via configurator updates vaultState.
     function test_setRebalanceThresholdDownBps_asConfigurator_updatesVaultState() public {
         uint256 newThresh = 1_500; // within [500, 2000]
         vm.prank(configurator);
@@ -149,7 +143,6 @@ contract ManagerHandlerUnit is ForkSetupFull {
         assertLe(newThresh, BasaltConstants.MAX_REBALANCE_THRESHOLD_BPS, "threshold <= MAX");
     }
 
-    /// @notice Config setter from stranger (not configurator) reverts.
     function test_setTargetLtv_asStranger_reverts() public {
         uint256 ltvBefore = vaultState.targetLtvBps();
         vm.prank(stranger);
@@ -162,7 +155,6 @@ contract ManagerHandlerUnit is ForkSetupFull {
         assertEq(vaultState.targetLtvBps(), ltvBefore, "targetLtv unchanged after revert");
     }
 
-    /// @notice setTargetLtv with out-of-bounds value reverts.
     function test_setTargetLtv_outOfBounds_reverts() public {
         uint256 ltvBefore = vaultState.targetLtvBps();
         assertGt(uint256(9_000), BasaltConstants.MAX_TARGET_LTV_BPS, "test value must exceed MAX");
@@ -180,7 +172,6 @@ contract ManagerHandlerUnit is ForkSetupFull {
     //  REBALANCE FLOW (Priority 4)
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice Rebalance on empty vault (no collateral) reverts with NoCollateral.
     function test_rebalance_emptyVault_reverts() public {
         uint256 ltvBefore = managerHandler.currentLtvBps(IManagerHandlerVaultCore(address(vaultCore)));
         assertEq(ltvBefore, 0, "empty vault should have 0 LTV");
@@ -199,7 +190,6 @@ contract ManagerHandlerUnit is ForkSetupFull {
         );
     }
 
-    /// @notice Rebalance from stranger (not operational) reverts.
     function test_rebalance_asStranger_reverts() public {
         assertEq(
             uint8(vaultState.rebalanceState()),
@@ -220,7 +210,6 @@ contract ManagerHandlerUnit is ForkSetupFull {
         );
     }
 
-    /// @notice Rebalance when LTV already at target reverts.
     function test_rebalance_ltvAtTarget_reverts() public {
         _setupVaultWithPosition();
 
@@ -245,7 +234,6 @@ contract ManagerHandlerUnit is ForkSetupFull {
         // If LTV != target, the test is a no-op (the fork state varies)
     }
 
-    /// @notice finalizeRebalance from stranger reverts.
     function test_finalizeRebalance_asStranger_reverts() public {
         assertEq(
             uint8(vaultState.rebalanceState()),
@@ -265,7 +253,6 @@ contract ManagerHandlerUnit is ForkSetupFull {
         );
     }
 
-    /// @notice finalizeRebalance when not pending reverts.
     function test_finalizeRebalance_notPending_reverts() public {
         _setupVaultWithPosition();
 
@@ -287,7 +274,6 @@ contract ManagerHandlerUnit is ForkSetupFull {
         );
     }
 
-    /// @notice Rebalance while pending deposit reverts with NotIdle.
     function test_rebalance_whileDepositPending_reverts() public {
         _rollCooldown();
         vm.recordLogs();
@@ -316,7 +302,6 @@ contract ManagerHandlerUnit is ForkSetupFull {
     //  VIEW TESTS
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice currentLtvBps with position returns non-zero when vault has debt.
     function test_currentLtvBps_withPosition_returnsNonZero() public {
         _setupVaultWithPosition();
 
@@ -325,7 +310,6 @@ contract ManagerHandlerUnit is ForkSetupFull {
         assertLe(ltv, BasaltConstants.MAX_SAFE_LTV_BPS, "LTV should be <= 70%");
     }
 
-    /// @notice currentLtvBps on empty vault returns zero.
     function test_currentLtvBps_emptyVault_returnsZero() public view {
         uint256 ltv = managerHandler.currentLtvBps(IManagerHandlerVaultCore(address(vaultCore)));
         assertEq(ltv, 0, "LTV should be 0 on empty vault");

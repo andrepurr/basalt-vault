@@ -43,7 +43,6 @@ contract FeeAccountingHandlerUnit is ForkSetupFull {
     //  ACCESS CONTROL (Priority 1)
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice Stranger cannot trigger fee accrual -- not authorized as initiator.
     function test_accrueManagerFee_asStranger_reverts() public {
         uint256 feeBefore = vaultState.managerAccruedFeeUsdE18();
 
@@ -59,7 +58,6 @@ contract FeeAccountingHandlerUnit is ForkSetupFull {
         assertEq(vaultState.managerAccruedFeeUsdE18(), feeBefore, "fee must not change on revert");
     }
 
-    /// @notice Stranger calling through themselves (not a handler slot) also reverts.
     function test_accrueManagerFee_strangerDirectCall_reverts() public {
         uint256 hwmBefore = vaultState.highWaterMarkProfitUsdE18();
 
@@ -76,7 +74,6 @@ contract FeeAccountingHandlerUnit is ForkSetupFull {
         assertEq(vaultState.highWaterMarkProfitUsdE18(), hwmBefore, "HWM must not change on revert");
     }
 
-    /// @notice Operational can accrue fee through managerContract (protocolManager path).
     function test_accrueManagerFee_asOperational_succeeds() public {
         // Setup: do a full deposit cycle so vault has a position
         _doFirstDepositCycle();
@@ -99,7 +96,6 @@ contract FeeAccountingHandlerUnit is ForkSetupFull {
     //  FEE CALCULATION CORRECTNESS (Priority 2)
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice After profit accrual, highWaterMark increases.
     function test_accrueManagerFee_withProfit_updatesHwm() public {
         _doFirstDepositCycle();
         uint256 hwmBefore = vaultState.highWaterMarkProfitUsdE18();
@@ -119,7 +115,6 @@ contract FeeAccountingHandlerUnit is ForkSetupFull {
         assertGt(hwmAfter, hwmBefore, "HWM should increase after profit accrual");
     }
 
-    /// @notice When NAV <= HWM (no new profit), no fee accrues.
     function test_accrueManagerFee_withNoProfit_hwmUnchanged() public {
         _doFirstDepositCycle();
 
@@ -151,7 +146,6 @@ contract FeeAccountingHandlerUnit is ForkSetupFull {
         assertEq(feeAfterSecond, feeAfterFirst, "Accrued fee should not change without new profit");
     }
 
-    /// @notice Accrued fee is bounded: fee <= profitDelta * PERF_FEE_BPS / BPS.
     function test_accrueManagerFee_accruedFeeWithinBounds() public {
         _doFirstDepositCycle();
         _simulateProfit();
@@ -181,7 +175,6 @@ contract FeeAccountingHandlerUnit is ForkSetupFull {
         assertLe(performanceFee, maxFee, "performance fee should be <= profitDelta * feeBps / BPS");
     }
 
-    /// @notice calculateManagerFee view returns same values as what accrueManagerFee sets.
     function test_calculateManagerFee_matchesAccrued() public {
         _doFirstDepositCycle();
         _simulateProfit();
@@ -205,7 +198,6 @@ contract FeeAccountingHandlerUnit is ForkSetupFull {
         }
     }
 
-    /// @notice Calling accrueManagerFee twice without new profit doesn't double-accrue.
     function test_accrueManagerFee_calledTwice_idempotent() public {
         _doFirstDepositCycle();
         _simulateProfit();
@@ -240,7 +232,6 @@ contract FeeAccountingHandlerUnit is ForkSetupFull {
     //  EDGE CASES
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice Empty vault (no isolation vault): calculateManagerFee returns zero fee.
     function test_calculateManagerFee_emptyVault_returnsZero() public view {
         (, uint256 profit,, uint256 performanceFee,,) = feeAccountingHandler.calculateManagerFee(
             IFeeAccountingHandlerVaultCore(address(vaultCore)), IBasaltMath(address(basaltMath))
@@ -249,7 +240,6 @@ contract FeeAccountingHandlerUnit is ForkSetupFull {
         assertEq(performanceFee, 0, "empty vault should have zero performance fee");
     }
 
-    /// @notice Accruing on empty vault should not revert and should not change state.
     function test_accrueManagerFee_emptyVault_noRevert() public {
         uint256 hwmBefore = vaultState.highWaterMarkProfitUsdE18();
         uint256 feeBefore = vaultState.managerAccruedFeeUsdE18();
@@ -266,7 +256,6 @@ contract FeeAccountingHandlerUnit is ForkSetupFull {
         assertEq(vaultState.managerAccruedFeeUsdE18(), feeBefore, "fee unchanged on empty vault");
     }
 
-    /// @notice NftOwner can also accrue fee directly (initiator = self, caller = self).
     function test_accrueManagerFee_asNftOwnerDirect_succeeds() public {
         _doFirstDepositCycle();
 
@@ -286,7 +275,6 @@ contract FeeAccountingHandlerUnit is ForkSetupFull {
     //  REGRESSION — BAS-1 (performance fee was always zero)
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice REGRESSION BAS-1: performance fee actually accrues non-zero after profit.
     /// @dev    Pre-fix: `targetVaultCore.performanceFeeBps()` returned 0 (uninitialized
     ///         storage in VaultCore) → `performanceFeeUsdE18 = profitDelta * 0 / BPS = 0`.
     ///         Post-fix: reads `vaultState.managementFeeBps()` (auto-initialized to
@@ -328,7 +316,6 @@ contract FeeAccountingHandlerUnit is ForkSetupFull {
         assertGt(hwmAfter, hwmBefore, "HWM ratchets up after profit");
     }
 
-    /// @notice REGRESSION BAS-1: zero `managementFeeBps` reproduces the pre-fix bug
     ///         (no fee accrues), confirming the formula path actually depends on the
     ///         storage we wired through. Uses a fresh VaultState clone via storage write
     ///         on slot of `managementFeeBps` to bypass the only-decrease setter constraint.

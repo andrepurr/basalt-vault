@@ -57,7 +57,6 @@ contract BasaltZapOutUnit is ForkSetupFull {
     //  PERMISSIONLESS ACCESS
     // -----------------------------------------------------------------------
 
-    /// @notice Stranger can call zapOut (no auth modifier). The call reverts
     ///         in the Uniswap swap leg (ABI mismatch), NOT on access control.
     function test_zapOut_asStranger_doesNotRevertOnAuth() public {
         _fundActor(stranger);
@@ -81,7 +80,6 @@ contract BasaltZapOutUnit is ForkSetupFull {
     //  ENTRY POINT -- zapOut reaches swap stage
     // -----------------------------------------------------------------------
 
-    /// @notice zapOut with valid inputs passes all checks and attempts swap.
     ///         Reverts inside exactInputSingle (ABI mismatch with SwapRouter02).
     function test_zapOut_withValidInputs_reachesSwapStage() public {
         _fundActor(stranger);
@@ -105,7 +103,6 @@ contract BasaltZapOutUnit is ForkSetupFull {
     //  ZERO AMOUNT
     // -----------------------------------------------------------------------
 
-    /// @notice zapOut with zero WBTC reverts with ZeroAmount.
     function test_zapOut_zeroAmount_reverts() public {
         uint256 wbtcBefore = wbtc.balanceOf(stranger);
         vm.prank(stranger);
@@ -119,7 +116,6 @@ contract BasaltZapOutUnit is ForkSetupFull {
     //  INSUFFICIENT BALANCE
     // -----------------------------------------------------------------------
 
-    /// @notice zapOut without WBTC balance reverts (SafeERC20 transfer failure).
     function test_zapOut_insufficientBalance_reverts() public {
         _fundActor(stranger);
         assertEq(wbtc.balanceOf(stranger), 0, "stranger should have zero WBTC");
@@ -135,7 +131,6 @@ contract BasaltZapOutUnit is ForkSetupFull {
     //  SLIPPAGE
     // -----------------------------------------------------------------------
 
-    /// @notice Slippage below MIN_SWAP_SLIPPAGE_BPS (0.1%) reverts with InvalidSwapSlippage.
     function test_zapOut_slippageBelowMin_reverts() public {
         _fundActor(stranger);
         _fundAndApproveWbtc(stranger, TYPICAL_WBTC_AMOUNT);
@@ -147,7 +142,6 @@ contract BasaltZapOutUnit is ForkSetupFull {
         zapOut.zapOut(TYPICAL_WBTC_AMOUNT, belowMin);
     }
 
-    /// @notice Slippage above MAX_SWAP_SLIPPAGE_BPS (10%) reverts with InvalidSwapSlippage.
     function test_zapOut_slippageAboveMax_reverts() public {
         _fundActor(stranger);
         _fundAndApproveWbtc(stranger, TYPICAL_WBTC_AMOUNT);
@@ -159,7 +153,6 @@ contract BasaltZapOutUnit is ForkSetupFull {
         zapOut.zapOut(TYPICAL_WBTC_AMOUNT, aboveMax);
     }
 
-    /// @notice Slippage of zero reverts with InvalidSwapSlippage (below minimum).
     function test_zapOut_zeroSlippage_reverts() public {
         _fundActor(stranger);
         _fundAndApproveWbtc(stranger, TYPICAL_WBTC_AMOUNT);
@@ -175,7 +168,6 @@ contract BasaltZapOutUnit is ForkSetupFull {
     //  IMMUTABLES
     // -----------------------------------------------------------------------
 
-    /// @notice Constructor stores correct immutable addresses.
     function test_constructor_setsImmutables() public view {
         assertEq(address(zapOut.SWAP_ROUTER()), BasaltAddresses.UNI_V3_SWAP_ROUTER, "SWAP_ROUTER mismatch");
         assertEq(zapOut.WBTC_TOKEN(), BasaltAddresses.WBTC, "WBTC_TOKEN mismatch");

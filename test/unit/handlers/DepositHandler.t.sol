@@ -67,7 +67,6 @@ contract DepositHandlerUnit is ForkSetupFull {
     //  ACCESS CONTROL (Priority 1)
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice Stranger cannot deposit -- not vault NFT owner.
     function test_deposit_asStranger_reverts() public {
         deal(BasaltAddresses.GM_MARKET_TOKEN, stranger, 100e18);
         vm.prank(stranger);
@@ -86,7 +85,6 @@ contract DepositHandlerUnit is ForkSetupFull {
         assertEq(vaultState.pendingDepositAmountGmE18(), 0, "no pending amount after revert");
     }
 
-    /// @notice VaultOwner can deposit successfully.
     function test_deposit_asNftOwner_succeeds() public {
         _rollCooldown();
         uint256 gmBefore = IERC20(BasaltAddresses.GM_MARKET_TOKEN).balanceOf(vaultOwner);
@@ -107,7 +105,6 @@ contract DepositHandlerUnit is ForkSetupFull {
         );
     }
 
-    /// @notice Stranger cannot call absorbSurplus.
     function test_absorbSurplus_asStranger_reverts() public {
         uint8 stateBefore = uint8(vaultState.depositState());
         uint256 totalDepositedBefore = vaultState.totalDepositedGmE18();
@@ -121,7 +118,6 @@ contract DepositHandlerUnit is ForkSetupFull {
         assertEq(vaultState.totalDepositedGmE18(), totalDepositedBefore, "totalDeposited unchanged after revert");
     }
 
-    /// @notice Stranger cannot call addWbtcAsDeposit.
     function test_addWbtcAsDeposit_asStranger_reverts() public {
         uint256 totalDepositedBefore = vaultState.totalDepositedGmE18();
 
@@ -133,7 +129,6 @@ contract DepositHandlerUnit is ForkSetupFull {
         assertEq(uint8(vaultState.depositState()), uint8(VaultState.State.IDLE), "state unchanged after revert");
     }
 
-    /// @notice Stranger cannot finalize deposit -- not manager or NFT owner.
     function test_finalizeDeposit_asStranger_reverts() public {
         uint256 totalDepositedBefore = vaultState.totalDepositedGmE18();
 
@@ -145,7 +140,6 @@ contract DepositHandlerUnit is ForkSetupFull {
         assertEq(uint8(vaultState.depositState()), uint8(VaultState.State.IDLE), "state unchanged after revert");
     }
 
-    /// @notice Operational can finalize through managerContract.
     function test_finalizeDeposit_asOperational_succeeds() public {
         _doFirstDeposit();
 
@@ -168,7 +162,6 @@ contract DepositHandlerUnit is ForkSetupFull {
 
     // ── Branch 1: First deposit (creates isolation vault) ─────────────────
 
-    /// @notice First deposit creates isolation vault.
     function test_deposit_firstDeposit_createsIsolationVault() public {
         assertEq(vaultState.dolomiteIsolationVault(), address(0), "no iso vault before first deposit");
 
@@ -188,7 +181,6 @@ contract DepositHandlerUnit is ForkSetupFull {
         );
     }
 
-    /// @notice First deposit transitions state to PENDING.
     function test_deposit_firstDeposit_stateTransitionToPending() public {
         assertEq(
             uint8(vaultState.depositState()),
@@ -212,7 +204,6 @@ contract DepositHandlerUnit is ForkSetupFull {
 
     // ── Branch 4: Standard deposit (has position with debt from rebalance) ──
 
-    /// @notice Second deposit after completed first cycle succeeds.
     ///         Branch depends on vault state: if there's collateral and debt, it takes Standard path.
     ///         On pinned fork after first deposit + finalize, vault may have collateral only (no debt yet).
     function test_deposit_afterFirstCycle_succeeds() public {
@@ -235,7 +226,6 @@ contract DepositHandlerUnit is ForkSetupFull {
 
     // ── Branch selection view ──────────────────────────────────────────────
 
-    /// @notice selectDepositBranch returns CreateIsolationVault for fresh vault.
     function test_selectDepositBranch_freshVault_returnsCreateIsolationVault() public view {
         DepositContext memory ctx = depositHandler.selectDepositBranch(
             IDepositHandlerVaultCore(address(vaultCore)), FIRST_DEPOSIT_GM, 100
@@ -253,7 +243,6 @@ contract DepositHandlerUnit is ForkSetupFull {
     //  FINALIZE PATHS
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice Finalize after GMX keeper execution succeeds normally.
     function test_finalizeDeposit_afterGmxExecution_succeeds() public {
         _doFirstDeposit();
 
@@ -270,7 +259,6 @@ contract DepositHandlerUnit is ForkSetupFull {
         assertEq(vaultState.pendingDepositAmountGmE18(), 0, "pending deposit cleared after finalize");
     }
 
-    /// @notice After GMX cancellation, vault is frozen in Dolomite; finalize reverts with VaultStillFrozen.
     ///         This is expected behavior: cancellation leaves vault frozen until async recovery unfreezes it.
     function test_finalizeDeposit_afterGmxCancellation_vaultFrozenReverts() public {
         _rollCooldown();
@@ -305,7 +293,6 @@ contract DepositHandlerUnit is ForkSetupFull {
         );
     }
 
-    /// @notice Finalize before callback reverts -- deposit not pending.
     function test_finalizeDeposit_notPending_reverts() public {
         // Verify precondition: vault is IDLE
         assertEq(
@@ -326,7 +313,6 @@ contract DepositHandlerUnit is ForkSetupFull {
     //  STATE MACHINE ENFORCEMENT
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice Deposit while already PENDING reverts with NotIdle.
     function test_deposit_whilePending_reverts() public {
         // Initiate first deposit to enter PENDING
         _rollCooldown();
@@ -355,7 +341,6 @@ contract DepositHandlerUnit is ForkSetupFull {
     // than cheatcode call depth". These validations are covered by
     // the handler's internal checks and tested via integration tests.
 
-    /// @notice Deposit at exact minimum slippage boundary succeeds.
     function test_deposit_slippageAtMin_succeeds() public {
         _rollCooldown();
         vm.prank(vaultOwner);
@@ -370,7 +355,6 @@ contract DepositHandlerUnit is ForkSetupFull {
         assertGt(vaultState.pendingDepositAmountGmE18(), 0, "pending deposit amount set at min slippage");
     }
 
-    /// @notice Deposit at exact maximum slippage boundary succeeds.
     function test_deposit_slippageAtMax_succeeds() public {
         _rollCooldown();
         vm.prank(vaultOwner);
@@ -389,7 +373,6 @@ contract DepositHandlerUnit is ForkSetupFull {
     //  addWbtcAsDeposit
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice addWbtcAsDeposit with zero amount reverts (RequirementWbtcSurplusValue).
     function test_addWbtcAsDeposit_zeroAmount_reverts() public {
         _doFirstDepositCycle();
 
@@ -407,7 +390,6 @@ contract DepositHandlerUnit is ForkSetupFull {
     //  absorbSurplus
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice absorbSurplus on vault with no surplus reverts.
     function test_absorbSurplus_noSurplus_reverts() public {
         _doFirstDepositCycle();
 
@@ -431,7 +413,6 @@ contract DepositHandlerUnit is ForkSetupFull {
 
     // NOTE: amountBelowMinimum revert test removed — same delegatecall depth issue.
 
-    /// @notice Deposit with exactly 1e18 GM (minimum) succeeds.
     function test_deposit_exactMinimumAmount_succeeds() public {
         _rollCooldown();
         vm.prank(vaultOwner);
@@ -508,7 +489,6 @@ contract DepositHandlerUnit is ForkSetupFull {
     //  FUZZ TESTS (FUZZ-02: deposit flow edge cases)
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice Fuzz deposit with random GM amount and slippage — must not produce unexpected reverts.
     function testFuzz_deposit_randomAmountAndSlippage(uint256 amountGmSeed, uint256 slippageSeed) public {
         uint256 amountGm = bound(amountGmSeed, 1, 100_000e18);
         uint256 slippage = bound(slippageSeed, BasaltConstants.MIN_DEPOSIT_SLIPPAGE_BPS, BasaltConstants.MAX_DEPOSIT_SLIPPAGE_BPS);
@@ -545,7 +525,6 @@ contract DepositHandlerUnit is ForkSetupFull {
         }
     }
 
-    /// @notice Fuzz deposit with zero amount — handler should revert.
     function testFuzz_deposit_zeroAmountReverts(uint256 slippageSeed) public {
         uint256 slippage = bound(slippageSeed, BasaltConstants.MIN_DEPOSIT_SLIPPAGE_BPS, BasaltConstants.MAX_DEPOSIT_SLIPPAGE_BPS);
 
@@ -571,7 +550,6 @@ contract DepositHandlerUnit is ForkSetupFull {
         }
     }
 
-    /// @notice Fuzz deposit with slippage outside valid range — handler should revert.
     function testFuzz_deposit_slippageOutOfRangeReverts(uint256 amountGmSeed, uint256 slippageSeed) public {
         uint256 amountGm = bound(amountGmSeed, 1, 100_000e18);
 

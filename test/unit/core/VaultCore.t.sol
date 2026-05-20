@@ -9,11 +9,6 @@ import {
     ZeroHandler, DuplicateHandler
 } from "../../../src/core/vaultCoreLibraries/VaultCoreTypes.sol";
 import {VaultCoreNftFactory} from "../../../src/core/VaultCoreNftFactory.sol";
-import {
-    NotManager, NotHandler, NotNftOwner, NotManagerOrNftOwner,
-    NoHandlerProposal, NoBasaltAddressesProposal, UnknownHandler,
-    ZeroHandler, DuplicateHandler
-} from "../../../src/core/vaultCoreLibraries/VaultCoreTypes.sol";
 
 /// @title VaultCore access control and governance proposal flow unit tests
 contract VaultCoreUnit is ForkSetupFull {

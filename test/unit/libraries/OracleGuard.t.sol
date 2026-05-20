@@ -40,7 +40,6 @@ contract OracleGuardUnit is ForkSetupFull {
     //  CHAINLINK PRICE READS
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice WBTC/USD Chainlink feed returns a positive price on fork.
     function test_readChainlinkPrice_wbtcFeed_returnsPositive() public view {
         uint256 price = harness.readChainlinkPrice(
             CL_WBTC, BasaltConstants.ORACLE_WBTC_MAX_AGE, BasaltConstants.ORACLE_WBTC_MAX_PRICE_E8
@@ -50,7 +49,6 @@ contract OracleGuardUnit is ForkSetupFull {
         assertLe(price, BasaltConstants.ORACLE_WBTC_MAX_PRICE_E8, "WBTC price must be within max price bound");
     }
 
-    /// @notice ETH/USD (USDC/USD) Chainlink feed returns a positive price on fork.
     function test_readChainlinkPrice_usdcFeed_returnsPositive() public view {
         uint256 price = harness.readChainlinkPrice(
             CL_USDC, BasaltConstants.ORACLE_USDC_MAX_AGE, BasaltConstants.ORACLE_USDC_MAX_PRICE_E8
@@ -61,7 +59,6 @@ contract OracleGuardUnit is ForkSetupFull {
         assertLe(price, 1.10e8, "USDC price should be <= $1.10");
     }
 
-    /// @notice WBTC price from Chainlink is in reasonable range: $10,000 to $500,000 (E8).
     function test_readChainlinkPrice_wbtc_returnsReasonableRange() public view {
         uint256 price = harness.readChainlinkPrice(
             CL_WBTC, BasaltConstants.ORACLE_WBTC_MAX_AGE, BasaltConstants.ORACLE_WBTC_MAX_PRICE_E8
@@ -77,7 +74,6 @@ contract OracleGuardUnit is ForkSetupFull {
     //  SEQUENCER CHECKS
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice Sequencer is up on the pinned fork block -- should not revert.
     function test_requireSequencerUp_onFork_succeeds() public view {
         harness.requireSequencerUp(CL_SEQ);
         // Verify the sequencer feed answer is 0 (meaning "up")
@@ -85,7 +81,6 @@ contract OracleGuardUnit is ForkSetupFull {
         assertEq(answer, 0, "sequencer feed answer=0 means sequencer is up");
     }
 
-    /// @notice Simulate stale sequencer by overwriting startedAt to recent timestamp (within grace period).
     function test_requireSequencerUp_withinGracePeriod_reverts() public {
         // Chainlink L2 sequencer feed stores answer in slot layout.
         // We use vm.mockCall to simulate a sequencer that just came back up (startedAt = now).

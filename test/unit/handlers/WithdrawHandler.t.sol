@@ -78,7 +78,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
     //  ACCESS CONTROL (Priority 1)
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice Stranger cannot withdraw -- not vault NFT owner.
     function test_withdraw_asStranger_reverts() public {
         _setupVaultWithPosition();
 
@@ -96,7 +95,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         assertEq(uint8(vaultState.withdrawState()), stateBefore, "withdraw state must not change on revert");
     }
 
-    /// @notice VaultOwner can withdraw -- async path sets state to PENDING.
     function test_withdraw_asNftOwner_succeeds() public {
         _setupVaultWithPosition();
 
@@ -119,7 +117,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         );
     }
 
-    /// @notice Only protocolManager can call withdrawManagerFeeShares.
     function test_withdrawManagerFeeShares_asStranger_reverts() public {
         _setupVaultWithPosition();
 
@@ -136,7 +133,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         assertEq(uint8(vaultState.withdrawState()), stateBefore, "withdraw state must not change on revert");
     }
 
-    /// @notice Stranger cannot finalize withdraw -- not manager or nft owner.
     function test_finalizeWithdraw_asStranger_reverts() public {
         uint8 stateBefore = uint8(vaultState.withdrawState());
         assertEq(stateBefore, uint8(VaultState.State.IDLE), "withdraw state should be IDLE initially");
@@ -148,7 +144,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         assertEq(uint8(vaultState.withdrawState()), stateBefore, "withdraw state must not change on revert");
     }
 
-    /// @notice Operational finalize when withdraw not pending reverts correctly.
     function test_finalizeWithdraw_notPending_reverts() public {
         _setupVaultWithPosition();
 
@@ -160,7 +155,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         managerContract.finalizeWithdraw(withdrawHandler, IWithdrawHandlerVaultCore(address(vaultCore)));
     }
 
-    /// @notice previewWithdraw is permissionless view (anyone can call).
     function test_previewWithdraw_asAnyone_succeeds() public {
         _setupVaultWithPosition();
 
@@ -172,7 +166,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         assertGt(preview.ownerEligibleSharesE18, 0, "stranger should see non-zero owner-eligible shares");
     }
 
-    /// @notice managerMaxFeeWithdrawShares is permissionless view.
     function test_managerMaxFeeWithdrawShares_asAnyone_succeeds() public {
         _setupVaultWithPosition();
 
@@ -190,7 +183,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
 
     // ── Async branch (vault has GM collateral + WBTC debt = AsyncDebt) ───
 
-    /// @notice Withdrawal from levered vault triggers async path and sets withdrawState to PENDING.
     function test_withdraw_async_setsStateToPending() public {
         _setupVaultWithPosition();
 
@@ -213,7 +205,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         );
     }
 
-    /// @notice selectWithdrawBranch returns AsyncDebt for levered vault.
     function test_selectWithdrawBranch_levered_returnsAsyncDebt() public {
         _setupVaultWithPosition();
 
@@ -233,7 +224,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         assertGt(ctx.wbtcDebtE8, 0, "context should have WBTC debt for AsyncDebt branch");
     }
 
-    /// @notice After async withdraw, pending accounting is recorded correctly.
     function test_withdraw_async_recordsPendingAccounting() public {
         _setupVaultWithPosition();
 
@@ -261,7 +251,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         );
     }
 
-    /// @notice Pending withdrawer is the vault NFT owner.
     function test_withdraw_async_pendingWithdrawerIsOwner() public {
         _setupVaultWithPosition();
 
@@ -288,7 +277,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
     //  STATE MACHINE ENFORCEMENT
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice Withdraw while deposit is PENDING reverts with NotIdle.
     function test_withdraw_whileDepositPending_reverts() public {
         _rollCooldown();
         vm.recordLogs();
@@ -317,7 +305,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         );
     }
 
-    /// @notice Withdraw while withdraw already PENDING reverts with NotIdle.
     function test_withdraw_whileWithdrawPending_reverts() public {
         _setupVaultWithPosition();
 
@@ -352,7 +339,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         );
     }
 
-    /// @notice Withdraw with zero shares reverts.
     function test_withdraw_zeroShares_reverts() public {
         _setupVaultWithPosition();
 
@@ -370,7 +356,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         assertEq(uint8(vaultState.withdrawState()), uint8(VaultState.State.IDLE), "state must remain IDLE after revert");
     }
 
-    /// @notice Withdraw with shares > SHARE_UNIT reverts.
     function test_withdraw_aboveShareUnit_reverts() public {
         _setupVaultWithPosition();
 
@@ -392,7 +377,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         assertEq(uint8(vaultState.withdrawState()), uint8(VaultState.State.IDLE), "state must remain IDLE after revert");
     }
 
-    /// @notice Withdrawing more than owner-eligible shares reverts.
     function test_withdraw_exceedsOwnerEligible_reverts() public {
         _setupVaultWithPosition();
 
@@ -413,7 +397,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
     //  VIEW TESTS
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice previewWithdraw on empty vault reverts because ownerEligibleShares = 0.
     function test_previewWithdraw_emptyVault_reverts() public {
         // Verify vault is truly empty before testing revert
         assertEq(vaultState.totalDepositedGmE18(), 0, "vault should have zero deposited GM");
@@ -423,7 +406,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         withdrawHandler.previewWithdraw(IWithdrawHandlerVaultCore(address(vaultCore)), 1e18);
     }
 
-    /// @notice managerMaxFeeWithdrawShares after deposit cycle is bounded below SHARE_UNIT.
     function test_managerMaxFeeWithdrawShares_afterDeposit_bounded() public {
         _setupVaultWithPosition();
 
@@ -433,7 +415,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         assertGt(maxShares, 0, "manager fee shares should be non-zero after deposit with fee accrual");
     }
 
-    /// @notice previewWithdraw with position shows non-zero gmToSell for async branch.
     function test_previewWithdraw_withPosition_showsAsyncFields() public {
         _setupVaultWithPosition();
 
@@ -452,7 +433,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         );
     }
 
-    /// @notice collectWithdrawContext returns correct GM collateral.
     function test_collectWithdrawContext_returnsExpectedCollateral() public {
         _setupVaultWithPosition();
 
@@ -568,7 +548,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
     //  FUZZ TESTS (FUZZ-02: withdraw flow edge cases)
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice Fuzz withdraw with random shares and slippage — must not produce unexpected reverts.
     function testFuzz_withdraw_randomSharesAndSlippage(uint256 sharesSeed, uint256 slippageSeed) public {
         _setupVaultWithPosition();
 
@@ -604,7 +583,6 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         }
     }
 
-    /// @notice Fuzz withdraw with zero shares — handler should revert.
     function testFuzz_withdraw_zeroSharesReverts(uint256 slippageSeed) public {
         _setupVaultWithPosition();
 

@@ -54,7 +54,6 @@ contract AsyncRecoveryHandlerUnit is ForkSetupFull {
     //  ACCESS CONTROL
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice Stranger cannot call nextUnstuckAt -- restricted to protocolManager or vaultNftOwner.
     function test_nextUnstuckAt_asStranger_reverts() public {
         // Pre-condition: stranger is neither vaultOwner nor protocolManager
         assertTrue(stranger != vaultOwner, "stranger must differ from vaultOwner");
@@ -65,7 +64,6 @@ contract AsyncRecoveryHandlerUnit is ForkSetupFull {
         asyncRecoveryHandler.nextUnstuckAt(IAsyncRecoveryHandlerVaultCore(address(vaultCore)));
     }
 
-    /// @notice VaultOwner can call nextUnstuckAt.
     function test_nextUnstuckAt_asNftOwner_succeeds() public {
         vm.prank(vaultOwner);
         (uint256 unstuckNotBefore, uint256 deprecated) =
@@ -75,7 +73,6 @@ contract AsyncRecoveryHandlerUnit is ForkSetupFull {
         assertEq(deprecated, 0, "deprecated field should be 0");
     }
 
-    /// @notice Stranger cannot call canUnstuckWith.
     function test_canUnstuckWith_asStranger_reverts() public {
         // Pre-condition: vault is idle, no pending operation
         assertEq(uint8(vaultState.depositState()), uint8(VaultState.State.IDLE), "vault should be idle before test");
@@ -87,7 +84,6 @@ contract AsyncRecoveryHandlerUnit is ForkSetupFull {
         );
     }
 
-    /// @notice Stranger cannot call unstuckPending.
     function test_unstuckPending_asStranger_reverts() public {
         // Pre-condition: deposit state unchanged after revert
         uint8 stateBefore = uint8(vaultState.depositState());
@@ -106,7 +102,6 @@ contract AsyncRecoveryHandlerUnit is ForkSetupFull {
     //  VIEWS -- IDLE VAULT
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice nextUnstuckAt on idle vault returns zero.
     function test_nextUnstuckAt_whenIdle_returnsZero() public {
         vm.prank(vaultOwner);
         (uint256 unstuckNotBefore, uint256 deprecated) =
@@ -115,7 +110,6 @@ contract AsyncRecoveryHandlerUnit is ForkSetupFull {
         assertEq(deprecated, 0, "deprecated return should always be 0");
     }
 
-    /// @notice canUnstuckWith on idle vault returns (false, "nothing pending").
     function test_canUnstuckWith_whenIdle_returnsNotAllowed() public {
         vm.prank(vaultOwner);
         (bool allowed, string memory reason) = asyncRecoveryHandler.canUnstuckWith(
@@ -129,7 +123,6 @@ contract AsyncRecoveryHandlerUnit is ForkSetupFull {
     //  UNSTUCK FLOW -- PENDING STATE
     // ════════════════════════════════════════════════════════════════════════
 
-    /// @notice unstuckPending on idle vault reverts with NothingPending.
     function test_unstuckPending_whenIdle_reverts() public {
         // Pre-condition: vault must be idle
         assertEq(uint8(vaultState.depositState()), uint8(VaultState.State.IDLE), "vault should be idle");
@@ -142,7 +135,6 @@ contract AsyncRecoveryHandlerUnit is ForkSetupFull {
         );
     }
 
-    /// @notice nextUnstuckAt when deposit is pending returns deadline + grace > 0.
     function test_nextUnstuckAt_whenDepositPending_returnsNonZero() public {
         _setupStuckDeposit();
 
@@ -160,7 +152,6 @@ contract AsyncRecoveryHandlerUnit is ForkSetupFull {
         );
     }
 
-    /// @notice unstuckPending before deadline + grace reverts with TooEarly.
     function test_unstuckPending_beforeDeadline_reverts() public {
         _setupStuckDeposit();
 
@@ -178,7 +169,6 @@ contract AsyncRecoveryHandlerUnit is ForkSetupFull {
         );
     }
 
-    /// @notice UNSTUCK_GRACE_AFTER_DEADLINE constant matches BasaltConstants.
     function test_unstuckGracePeriod_matchesConstant() public view {
         uint256 grace = asyncRecoveryHandler.UNSTUCK_GRACE_AFTER_DEADLINE();
         assertEq(

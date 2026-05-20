@@ -55,7 +55,6 @@ contract BasaltZapInUnit is ForkSetupFull {
     //  PERMISSIONLESS ACCESS
     // -----------------------------------------------------------------------
 
-    /// @notice Stranger can call zapIn -- no auth gating (ACL-04).
     ///         The call may revert for balance/amount reasons but NOT for auth.
     function test_zapIn_asStranger_doesNotRevertOnAuth() public {
         _fundActor(stranger);
@@ -79,7 +78,6 @@ contract BasaltZapInUnit is ForkSetupFull {
     //  ENTRY POINT -- zapIn with USDC
     // -----------------------------------------------------------------------
 
-    /// @notice zapIn with funded USDC initiates a GMX deposit and returns a request key.
     function test_zapIn_withUsdc_returnsRequestKey() public {
         _fundActor(stranger);
         _fundAndApproveUsdc(stranger, TYPICAL_USDC_AMOUNT);
@@ -92,7 +90,6 @@ contract BasaltZapInUnit is ForkSetupFull {
         assertEq(usdc.balanceOf(address(zapIn)), 0, "zapIn contract should hold zero USDC after call");
     }
 
-    /// @notice zapIn emits ZapInSubmitted event with correct user address.
     function test_zapIn_withUsdc_emitsEvent() public {
         _fundActor(stranger);
         _fundAndApproveUsdc(stranger, TYPICAL_USDC_AMOUNT);
@@ -106,7 +103,6 @@ contract BasaltZapInUnit is ForkSetupFull {
         assertEq(usdc.balanceOf(stranger), usdcBefore - TYPICAL_USDC_AMOUNT, "USDC pulled from caller");
     }
 
-    /// @notice After zapIn the USDC is pulled from the caller (balance decreases).
     function test_zapIn_withUsdc_pullsUsdcFromCaller() public {
         _fundActor(stranger);
         _fundAndApproveUsdc(stranger, TYPICAL_USDC_AMOUNT);
@@ -125,7 +121,6 @@ contract BasaltZapInUnit is ForkSetupFull {
     //  ZERO AMOUNT
     // -----------------------------------------------------------------------
 
-    /// @notice zapIn with zero USDC amount reverts with ZeroAmount.
     function test_zapIn_zeroAmount_reverts() public {
         _fundActor(stranger);
         uint256 ethBefore = stranger.balance;
@@ -140,7 +135,6 @@ contract BasaltZapInUnit is ForkSetupFull {
     //  MISSING EXECUTION FEE
     // -----------------------------------------------------------------------
 
-    /// @notice zapIn with zero msg.value reverts with MissingExecutionFee.
     function test_zapIn_zeroMsgValue_reverts() public {
         _fundActor(stranger);
         _fundAndApproveUsdc(stranger, TYPICAL_USDC_AMOUNT);
@@ -156,7 +150,6 @@ contract BasaltZapInUnit is ForkSetupFull {
     //  INSUFFICIENT BALANCE
     // -----------------------------------------------------------------------
 
-    /// @notice zapIn without USDC balance reverts (SafeERC20 transfer failure).
     function test_zapIn_insufficientBalance_reverts() public {
         _fundActor(stranger);
         // Approve but don't have tokens
@@ -173,7 +166,6 @@ contract BasaltZapInUnit is ForkSetupFull {
     //  SLIPPAGE
     // -----------------------------------------------------------------------
 
-    /// @notice Slippage above MAX_SWAP_SLIPPAGE_BPS (10%) reverts with InvalidSwapSlippage.
     function test_zapIn_slippageAboveMax_reverts() public {
         _fundActor(stranger);
         _fundAndApproveUsdc(stranger, TYPICAL_USDC_AMOUNT);
@@ -185,7 +177,6 @@ contract BasaltZapInUnit is ForkSetupFull {
         zapIn.zapIn{value: EXEC_FEE}(TYPICAL_USDC_AMOUNT, overMax);
     }
 
-    /// @notice Slippage at exactly MAX_SWAP_SLIPPAGE_BPS does NOT revert (boundary).
     function test_zapIn_slippageAtMax_succeeds() public {
         _fundActor(stranger);
         _fundAndApproveUsdc(stranger, TYPICAL_USDC_AMOUNT);
@@ -200,7 +191,6 @@ contract BasaltZapInUnit is ForkSetupFull {
         assertEq(usdc.balanceOf(address(zapIn)), 0, "contract holds zero USDC after call");
     }
 
-    /// @notice Typical 1% slippage with funded actor succeeds.
     function test_zapIn_typicalSlippage_succeeds() public {
         _fundActor(stranger);
         _fundAndApproveUsdc(stranger, TYPICAL_USDC_AMOUNT);
@@ -216,7 +206,6 @@ contract BasaltZapInUnit is ForkSetupFull {
     //  BELOW MINIMUM DEPOSIT
     // -----------------------------------------------------------------------
 
-    /// @notice Very small USDC amounts below the GM-value minimum revert with BelowMinimumDeposit.
     function test_zapIn_dustAmount_revertsWithBelowMinimumDeposit() public {
         _fundActor(stranger);
         uint256 dustUsdc = 1; // 0.000001 USDC -- well below 1 GM token value
@@ -233,7 +222,6 @@ contract BasaltZapInUnit is ForkSetupFull {
     //  IMMUTABLES
     // -----------------------------------------------------------------------
 
-    /// @notice Constructor stores correct immutable addresses.
     function test_constructor_setsImmutables() public view {
         assertEq(address(zapIn.SWAP_ROUTER()), BasaltAddresses.UNI_V3_SWAP_ROUTER, "SWAP_ROUTER mismatch");
         assertEq(address(zapIn.GMX_EXCHANGE_ROUTER()), BasaltAddresses.GMX_EXCHANGE_ROUTER, "GMX_EXCHANGE_ROUTER mismatch");
