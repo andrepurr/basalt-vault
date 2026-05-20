@@ -168,6 +168,16 @@ forge build
 ./scripts/run-tests.sh
 ```
 
+### Verification
+
+```bash
+# Formal verification (Halmos)
+./scripts/run-halmos.sh
+
+# Mutation testing
+./scripts/run-mutation.sh
+```
+
 ### Project Structure
 
 ```
@@ -185,3 +195,10 @@ src/
 
 ---
 
+## Roadmap
+
+This is the first vault in the Basalt protocol family. Next steps:
+
+- Additional GM market vaults (ETH/USDC, SOL/USDC)
+- Meta-vaults aggregating across individual market vaults
+- Cross-chain deployment
