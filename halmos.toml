@@ -1,0 +1,20 @@
+[global]
+# Halmos symbolic verification config for Basalt Vault
+
+# ── Progress & Reporting ──
+verbose = 1                        # 0=quiet, 1=per-test result, 2=SMT detail
+statistics = true                  # print solver stats (time, #queries) per test
+print-steps = true                 # show execution steps as they run
+early-exit = false                 # don't stop on first failure — run all tests
+
+# ── Parallelism ──
+test-parallel = true               # run tests in parallel across cores
+
+# ── Solver Timeouts ──
+solver-timeout-assertion = 120000  # 2 min per assertion
+solver-timeout-branching = 10000   # 10s per branch
+
+# ── Execution Bounds ──
+loop = 8                           # max loop unrolling (covers 4-token emergency redeem loop with headroom)
+depth = 0                          # unlimited call depth
+storage-layout = "generic"

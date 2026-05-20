@@ -1,0 +1,5 @@
+node_modules
+.git
+design-export
+design-system-ref
+*.zip

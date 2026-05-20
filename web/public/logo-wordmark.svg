@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 56" fill="none">
+  <g stroke="currentColor" stroke-width="2.2" stroke-linejoin="miter" transform="translate(4 4)">
+    <path d="M24 0 L46 12 V36 L24 48 L2 36 V12 Z" fill="none"></path>
+    <path d="M24 0 V24 L2 12"></path>
+    <path d="M24 24 L46 12"></path>
+    <path d="M24 24 V48"></path>
+  </g>
+  <circle cx="28" cy="28" r="2.8" fill="#ff6a3d"></circle>
+  <text x="64" y="36" font-family="Space Grotesk, sans-serif" font-weight="600" font-size="28" letter-spacing="-0.5" fill="currentColor">BASALT</text>
+  <text x="180" y="36" font-family="Space Grotesk, sans-serif" font-weight="400" font-size="28" letter-spacing="-0.5" fill="currentColor" opacity="0.65">VAULT</text>
+</svg>

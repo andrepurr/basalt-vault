@@ -1,0 +1,42 @@
+/* Basalt Vault — Spacing, radii, elevation
+   8pt scale with 2px floor. Sharp radii (columnar basalt). */
+
+:root {
+  --space-0:  0;
+  --space-1:  2px;
+  --space-2:  4px;
+  --space-3:  8px;
+  --space-4:  12px;
+  --space-5:  16px;
+  --space-6:  20px;
+  --space-7:  24px;
+  --space-8:  32px;
+  --space-9:  40px;
+  --space-10: 48px;
+  --space-11: 64px;
+  --space-12: 80px;
+  --space-13: 96px;
+  --space-14: 128px;
+
+  --radius-0: 0;
+  --radius-1: 2px;
+  --radius-2: 4px;
+  --radius-3: 6px;
+  --radius-pill: 999px;
+  --radius-sm: var(--radius-1);
+  --radius-md: var(--radius-2);
+  --radius-lg: var(--radius-3);
+  --radius-xl: var(--radius-3);
+  --radius-full: var(--radius-pill);
+
+  --elev-1: 0 0 0 1px var(--border-faint);
+  --elev-2: 0 0 0 1px var(--border-default), 0 1px 0 0 rgba(0,0,0,0.4);
+  --elev-3: 0 0 0 1px var(--border-default), 0 8px 24px -12px rgba(0,0,0,0.6);
+  --elev-pop: 0 0 0 1px var(--border-strong), 0 12px 40px -8px rgba(0,0,0,0.7);
+  --elev-inset: inset 0 0 0 1px var(--border-faint);
+
+  --content-narrow: 720px;
+  --content-default: 1100px;
+  --content-wide: 1400px;
+  --gutter: clamp(20px, 4vw, 48px);
+}

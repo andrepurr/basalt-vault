@@ -1,0 +1,115 @@
+.footer {
+  border-top: 1px solid var(--border-faint);
+  margin-top: 120px;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image:
+    linear-gradient(30deg, var(--border-faint) 12%, transparent 12.5%),
+    linear-gradient(150deg, var(--border-faint) 12%, transparent 12.5%),
+    linear-gradient(210deg, var(--border-faint) 12%, transparent 12.5%),
+    linear-gradient(330deg, var(--border-faint) 12%, transparent 12.5%);
+  background-size: 40px 70px;
+  pointer-events: none;
+}
+
+.inner {
+  position: relative;
+  max-width: var(--content-wide);
+  margin: 0 auto;
+  padding: 64px var(--gutter);
+  display: flex;
+  gap: 64px;
+}
+
+.left {
+  flex: 1;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--fg-default);
+}
+
+.brandName {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+}
+
+.chainInfo {
+  font: 500 12px / 1.4 var(--font-mono);
+  color: var(--fg-subtle);
+  margin-top: 12px;
+}
+
+.columns {
+  display: flex;
+  gap: 64px;
+}
+
+.colHeading {
+  font: 600 11px / 1.2 var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--fg-subtle);
+  margin-bottom: 12px;
+}
+
+.link {
+  display: block;
+  color: var(--fg-muted);
+  text-decoration: none;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  padding: 8px 0;
+  transition: color var(--dur-2) var(--ease-out);
+}
+
+.link:hover {
+  color: var(--fg-default);
+}
+
+.bottom {
+  position: relative;
+  max-width: var(--content-wide);
+  margin: 0 auto;
+  padding: 16px var(--gutter) 24px;
+  border-top: 1px solid var(--border-faint);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.copy {
+  font: 400 12px / 1.4 var(--font-sans);
+  color: var(--fg-faint);
+}
+
+.badge {
+  font: 500 11px / 1 var(--font-mono);
+  color: var(--fg-subtle);
+  padding: 4px 10px;
+  border: 1px solid var(--border-faint);
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 768px) {
+  .inner {
+    flex-direction: column;
+    gap: 40px;
+    padding: 40px var(--gutter);
+  }
+  .columns { flex-wrap: wrap; gap: 32px; }
+  .bottom { flex-direction: column; gap: 8px; text-align: center; }
+}

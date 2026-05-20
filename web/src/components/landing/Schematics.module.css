@@ -1,0 +1,73 @@
+.section {
+  max-width: var(--content-wide);
+  margin: 0 auto;
+  padding: var(--space-13) var(--gutter) 0;
+}
+
+.head {
+  margin-bottom: var(--space-9);
+}
+
+.eyebrow {
+  font: var(--weight-semibold) 11px / 1.2 var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ember-500);
+  margin-bottom: var(--space-5);
+}
+
+.title {
+  font: var(--weight-semibold) clamp(36px, 4.5vw, 56px) / 1.0 var(--font-display);
+  letter-spacing: var(--tracking-display);
+  color: var(--fg-default);
+  margin: 0;
+}
+
+.diagram {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-faint);
+  border-radius: var(--radius-2);
+  padding: 24px;
+  overflow: hidden;
+}
+
+.diagramLabel {
+  font: var(--weight-medium) 11px / 1.2 var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--fg-subtle);
+  margin-bottom: 16px;
+}
+
+.flowSvg {
+  width: 100%;
+  height: auto;
+  max-height: 80px;
+}
+
+.curveSvg {
+  width: 100%;
+  height: auto;
+}
+
+.keeperSvg {
+  width: 100%;
+  height: auto;
+}
+
+.topRow {
+  margin-bottom: 1px;
+}
+
+.bottomRow {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 1px;
+}
+
+@media (max-width: 1024px) {
+  .bottomRow {
+    grid-template-columns: 1fr;
+    gap: 1px;
+  }
+}

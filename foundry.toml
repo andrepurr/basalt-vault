@@ -1,0 +1,59 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+solc = "0.8.28"
+via_ir = true
+optimizer = true
+optimizer_runs = 1
+# RULE ZERO: DO NOT run 'forge test' directly.
+# Use MCP tool: codegen/codegen_test() or ./scripts/run-tests.sh
+# This trap URL ensures direct 'forge test' fails loudly.
+eth_rpc_url = "http://USE-RUN-TESTS-SH-NOT-FORGE-TEST:1"
+
+# RPC caching — NEVER disable. Critical for fork test performance.
+no_storage_caching = false
+
+[rpc_endpoints]
+mainnet = "${ETH_RPC_URL}"
+arbitrum = "${ARBITRUM_RPC_URL}"
+base = "${BASE_RPC_URL}"
+optimism = "${OPTIMISM_RPC_URL}"
+
+[etherscan]
+mainnet = { key = "${ETHERSCAN_API_KEY}" }
+arbitrum = { key = "${ARBISCAN_API_KEY}", chain = 42161 }
+
+# ═══════════════════════════════════════════════════════════════════════
+# DETERMINISTIC SEEDS — DO NOT REMOVE
+# Fixed seeds ensure same fuzz inputs → same addresses → Anvil cache hits.
+# Without seeds: random addresses each run → cache miss → 10-100x slower.
+# ═══════════════════════════════════════════════════════════════════════
+
+# Invariant testing
+[invariant]
+runs = 256
+depth = 100
+fail_on_revert = true
+call_override = false
+dictionary_weight = 40
+include_storage = true
+include_push_bytes = true
+seed = "0x1234"
+failure_persist_dir = "cache/invariant"
+
+# Fuzz testing
+[fuzz]
+runs = 1000000
+max_test_rejects = 100000
+dictionary_weight = 40
+include_storage = true
+include_push_bytes = true
+seed = "0x1234"
+failure_persist_dir = "cache/fuzz"
+
+# DO NOT REMOVE lint_on_build = false!
+# Without it, every forge build spams hundreds of lint warnings.
+# Run "forge lint" manually when you actually want to lint.
+[lint]
+lint_on_build = false

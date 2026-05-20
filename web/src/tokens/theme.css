@@ -1,0 +1,74 @@
+/* Basalt Vault — Semantic dark theme tokens
+   95% basalt grays, 5% ember for action, state colors for state only. */
+
+:root {
+  --bg-canvas:  var(--basalt-50);
+  --bg-surface: var(--basalt-100);
+  --bg-raised:  var(--basalt-200);
+  --bg-overlay: var(--basalt-300);
+  --bg-inset:   var(--basalt-0);
+  --bg-vault:   var(--basalt-0);
+
+  --surface-base:     var(--bg-canvas);
+  --surface-elevated: var(--bg-surface);
+  --surface-overlay:  var(--bg-overlay);
+  --surface-sunken:   var(--bg-inset);
+
+  --fg-default: var(--basalt-900);
+  --fg-strong:  var(--basalt-900);
+  --fg-muted:   var(--basalt-700);
+  --fg-subtle:  var(--basalt-600);
+  --fg-faint:   var(--basalt-500);
+
+  --text-primary:   var(--fg-default);
+  --text-secondary: var(--fg-muted);
+  --text-tertiary:  var(--fg-subtle);
+  --text-disabled:  var(--fg-faint);
+
+  --border-default: var(--basalt-400);
+  --border-strong:  var(--basalt-500);
+  --border-faint:   var(--basalt-300);
+  --border-focus:   var(--ember-500);
+
+  --brand:       var(--ember-500);
+  --brand-hover: var(--ember-600);
+  --brand-fg:    var(--basalt-0);
+  --brand-dim:   var(--ember-100);
+
+  --interactive:       var(--brand);
+  --interactive-hover: var(--brand-hover);
+  --interactive-active: var(--ember-300);
+
+  --state-success:    var(--mineral-500);
+  --state-warning:    var(--sulfur-500);
+  --state-danger:     var(--magma-500);
+  --state-info:       var(--basalt-700);
+  --state-success-bg: var(--mineral-300);
+  --state-warning-bg: var(--sulfur-300);
+  --state-danger-bg:  var(--magma-300);
+
+  --status-success: var(--state-success);
+  --status-warning: var(--state-warning);
+  --status-error:   var(--state-danger);
+
+  --focus-ring: var(--ember-500);
+
+  --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:   cubic-bezier(0.6, 0, 0.8, 0.2);
+  --ease-snap: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-1: 80ms;
+  --dur-2: 160ms;
+  --dur-3: 280ms;
+  --dur-4: 480ms;
+
+  --transition-fast:   var(--dur-2) var(--ease-out);
+  --transition-normal: var(--dur-3) var(--ease-out);
+  --transition-slow:   var(--dur-4) var(--ease-out);
+
+  --shadow-sm: var(--elev-1);
+  --shadow-md: var(--elev-2);
+  --shadow-lg: var(--elev-3);
+
+  color-scheme: dark;
+}

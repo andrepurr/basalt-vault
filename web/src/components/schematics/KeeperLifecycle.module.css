@@ -1,0 +1,188 @@
+/* KeeperLifecycle — keeper timeline with progress bar and branch cards */
+
+.stage {
+  position: relative;
+  border: 1px solid var(--basalt-300);
+  border-radius: var(--radius-2);
+  padding: 28px 32px 28px;
+  overflow: hidden;
+  background: var(--basalt-50);
+}
+
+.label {
+  font: 600 9px var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-faint);
+  margin-bottom: 4px;
+}
+
+.title {
+  font: 600 18px var(--font-display);
+  color: var(--fg-default);
+  margin-bottom: 26px;
+  letter-spacing: -0.01em;
+}
+
+/* Timeline bar */
+.timeline {
+  position: relative;
+  height: 8px;
+  background: var(--basalt-200);
+  border-radius: var(--radius-pill);
+  margin: 20px 0;
+}
+
+.progress {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 62%;
+  background: linear-gradient(90deg, var(--mineral-500) 0%, var(--ember-500) 100%);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 0 14px -2px var(--ember-500);
+}
+
+.scan {
+  position: absolute;
+  left: 62%;
+  top: -2px;
+  bottom: -2px;
+  width: 16px;
+  background: radial-gradient(closest-side, var(--ember-500), transparent);
+  transform: translateX(-50%);
+  animation: scan 1.6s ease-in-out infinite;
+}
+
+@keyframes scan {
+  0%, 100% { opacity: 0.6; transform: translateX(-50%) scaleY(1); }
+  50%      { opacity: 1;   transform: translateX(-50%) scaleY(1.6); }
+}
+
+/* Stops grid */
+.stops {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  margin-top: 14px;
+  position: relative;
+}
+
+.stop {
+  text-align: center;
+  position: relative;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-pill);
+  background: var(--basalt-200);
+  border: 2px solid var(--basalt-400);
+  margin: 0 auto -28px;
+  transform: translateY(-32px);
+  position: relative;
+}
+
+.done .dot {
+  background: var(--mineral-500);
+  border-color: var(--mineral-500);
+}
+
+.liveDot .dot {
+  background: var(--ember-500);
+  border-color: var(--ember-500);
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--ember-500) 30%, transparent);
+  animation: livePulse 1.4s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { box-shadow: 0 0 0 4px color-mix(in oklch, var(--ember-500) 30%, transparent); }
+  50%      { box-shadow: 0 0 0 9px color-mix(in oklch, var(--ember-500) 8%, transparent); }
+}
+
+.stopName {
+  font: 600 11px var(--font-sans);
+  color: var(--fg-default);
+  letter-spacing: -0.005em;
+}
+
+.liveDot .stopName {
+  color: var(--ember-700);
+}
+
+.stopTime {
+  font: 500 10px var(--font-mono);
+  color: var(--fg-muted);
+  margin-top: 3px;
+}
+
+.stopDesc {
+  font: 400 10px/1.4 var(--font-sans);
+  color: var(--fg-faint);
+  margin-top: 4px;
+  padding: 0 6px;
+}
+
+/* Branch cards */
+.branch {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.card {
+  background: var(--basalt-100);
+  border: 1px solid var(--basalt-300);
+  border-radius: var(--radius-2);
+  padding: 12px 14px;
+  font: 400 11px/1.5 var(--font-sans);
+  color: var(--fg-muted);
+}
+
+.card b {
+  color: var(--fg-default);
+  font-weight: 600;
+}
+
+.cardDanger {
+  border-color: color-mix(in oklch, var(--magma-500) 40%, transparent);
+}
+
+.cardDanger b {
+  color: var(--magma-700);
+}
+
+.cardLabel {
+  font: 600 9px var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--fg-faint);
+  margin-bottom: 6px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .stops {
+    grid-template-columns: repeat(3, 1fr);
+    row-gap: 20px;
+  }
+
+  .branch {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .scan {
+    animation: none;
+    opacity: 0.8;
+  }
+
+  .liveDot .dot {
+    animation: none;
+  }
+}

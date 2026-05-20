@@ -1,0 +1,215 @@
+/* SettleFlow — 4-node horizontal async settle flow */
+
+.stage {
+  position: relative;
+  border: 1px solid var(--basalt-300);
+  border-radius: var(--radius-2);
+  padding: 28px 28px 24px;
+  background: var(--basalt-50);
+  overflow: hidden;
+}
+
+.label {
+  font: 600 9px var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-faint);
+  margin-bottom: 6px;
+}
+
+.title {
+  font: 600 18px var(--font-display);
+  color: var(--fg-default);
+  margin-bottom: 28px;
+  letter-spacing: -0.01em;
+}
+
+/* Flow grid: 4 nodes + 3 connectors */
+.flow {
+  display: grid;
+  grid-template-columns: 1fr 48px 1fr 48px 1fr 48px 1fr;
+  grid-template-rows: auto auto;
+  align-items: stretch;
+  row-gap: 10px;
+}
+
+/* Node card */
+.node {
+  background: var(--bg-inset);
+  border: 1px solid var(--basalt-300);
+  border-radius: var(--radius-2);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  min-height: 108px;
+}
+
+.step {
+  font: 600 9px var(--font-mono);
+  color: var(--fg-faint);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.name {
+  font: 600 14px var(--font-sans);
+  color: var(--fg-default);
+  margin-top: 6px;
+  letter-spacing: -0.005em;
+}
+
+.desc {
+  font: 400 11px/1.5 var(--font-sans);
+  color: var(--fg-muted);
+  margin-top: 6px;
+}
+
+/* Live node (step 03) */
+.live {
+  border-color: var(--basalt-700);
+}
+
+.live .step {
+  color: var(--ember-600);
+}
+
+/* Connector arrow between nodes */
+.connector {
+  position: relative;
+  overflow: hidden;
+  align-self: center;
+  height: 14px;
+}
+
+.line {
+  position: absolute;
+  left: 0;
+  right: 7px;
+  top: 50%;
+  height: 1px;
+  background: var(--basalt-400);
+  transform: translateY(-50%);
+}
+
+.head {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid var(--basalt-500);
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+}
+
+.pellet {
+  position: absolute;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  margin-top: -2.5px;
+  background: var(--ember-500);
+  border-radius: var(--radius-pill);
+  animation: pellet 2.4s linear infinite;
+}
+
+.pellet:nth-child(3) {
+  animation-delay: 0.8s;
+}
+
+.pellet:nth-child(4) {
+  animation-delay: 1.6s;
+}
+
+@keyframes pellet {
+  0%   { transform: translateX(0);    opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { transform: translateX(36px); opacity: 0; }
+}
+
+/* Actor labels row */
+.actor {
+  grid-row: 2;
+  text-align: center;
+  font: 500 9px var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--fg-muted);
+  padding-top: 2px;
+}
+
+.actorLive {
+  color: var(--ember-600);
+}
+
+.actorC1 { grid-column: 1; }
+.actorC2 { grid-column: 3; }
+.actorC3 { grid-column: 5; }
+.actorC4 { grid-column: 7; }
+
+/* Responsive: stack vertically on mobile */
+@media (max-width: 768px) {
+  .flow {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    row-gap: 0;
+  }
+
+  .connector {
+    height: 32px;
+    width: 14px;
+    margin: 0 auto;
+    overflow: visible;
+  }
+
+  .line {
+    left: 50%;
+    right: auto;
+    top: 0;
+    bottom: 7px;
+    width: 1px;
+    height: calc(100% - 7px);
+    transform: translateX(-50%);
+  }
+
+  .head {
+    right: auto;
+    left: 50%;
+    top: auto;
+    bottom: 0;
+    transform: translateX(-50%);
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-top: 5px solid var(--basalt-500);
+    border-bottom: none;
+  }
+
+  .pellet {
+    left: 50%;
+    top: 0;
+    margin-top: 0;
+    margin-left: -2.5px;
+    animation: pelletVert 2.4s linear infinite;
+  }
+
+  @keyframes pelletVert {
+    0%   { transform: translateY(0);    opacity: 0; }
+    15%  { opacity: 1; }
+    85%  { opacity: 1; }
+    100% { transform: translateY(24px); opacity: 0; }
+  }
+
+  .actor {
+    display: none;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .pellet {
+    animation: none;
+    opacity: 0.6;
+  }
+}

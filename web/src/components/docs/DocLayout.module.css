@@ -1,0 +1,59 @@
+/* DocLayout — Docs layout wrapper with sidebar + content area */
+
+.wrapper {
+  display: flex;
+  min-height: calc(100vh - 64px);
+  background: #0a0a0c;
+  background: var(--bg-canvas, #0a0a0c);
+  position: relative;
+}
+
+/* Subtle grid background — futuristic feel */
+.wrapper::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(255, 106, 61, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 106, 61, 0.02) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 60% 50% at 50% 30%, black 20%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 30%, black 20%, transparent 70%);
+}
+
+/* Subtle top glow */
+.wrapper::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 300px;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(ellipse at center top, rgba(255, 106, 61, 0.04) 0%, transparent 70%);
+}
+
+.content {
+  flex: 1;
+  max-width: var(--content-narrow);
+  padding: var(--space-10) var(--gutter) var(--space-14);
+  position: relative;
+  z-index: 1;
+  background: #0a0a0c;
+  background: var(--bg-canvas, #0a0a0c);
+}
+
+/* Mobile: stack vertically */
+@media (max-width: 768px) {
+  .wrapper {
+    flex-direction: column;
+  }
+
+  .content {
+    padding: var(--space-7) var(--gutter) var(--space-10);
+  }
+}
