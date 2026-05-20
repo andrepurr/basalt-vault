@@ -212,7 +212,45 @@ Rather than trusting a single oracle for GM token pricing, `GMCalculator.sol` re
 
 ---
 
-## 10. Formally Tested Invariants
+## 10. Halmos Symbolic Verification
+
+Halmos (v0.3.3) performs exhaustive symbolic verification — proving invariants hold for ALL possible inputs, not just random samples. Results:
+
+### AccessControlTest — 4/4 PASS
+
+| Invariant | Status | What it proves |
+|---|---|---|
+| `check_universalCall_rejects_nonHandler` | **PASS** | No address outside the 8 handler slots can call `universalCall` |
+| `check_universalCall_rejects_badInitiator` | **PASS** | Even valid handlers cannot pass unauthorized initiators |
+| `check_acceptHandler_onlyOwner` | **PASS** | Only the NFT owner can finalize handler rotation |
+| `check_proposeHandler_onlyManager` | **PASS** | Only the protocol manager can propose handler changes |
+
+### HandlerGovernanceTest — 6/6 PASS
+
+| Invariant | Status | What it proves |
+|---|---|---|
+| `check_proposeHandler_doesNotMutateSlots` | **PASS** | Proposing a handler never changes any active handler slot |
+| `check_managerCannotAcceptHandler` | **PASS** | Protocol manager cannot accept their own proposals |
+| `check_acceptHandler_replacesCorrectSlot` | **PASS** | Accept mutates exactly one slot and clears the proposal |
+| `check_proposeHandler_rejectsUnknownSlot` | **PASS** | Cannot propose against a non-existent handler slot |
+| `check_proposeHandler_rejectsDuplicate` | **PASS** | Cannot propose a handler that already occupies a slot |
+| `check_acceptHandler_revertsWithNoProposal` | **PASS** | Accept reverts when no proposal is pending |
+
+### ShareInvariantTest — 5/5 PASS
+
+| Invariant | Status | What it proves |
+|---|---|---|
+| `check_zeroNav_zeroShares` | **PASS** | Zero NAV yields zero shares for all parties |
+| `check_performanceFee_bounded` | **PASS** | Fee never exceeds `profitDelta × feeBps / BPS` |
+| `check_sharePartition_feeExceedsNav` | **PASS** | When fee ≥ NAV, total distributed shares ≤ totalShares |
+| `check_sharePartition_zeroFee` | **PASS** | Zero-fee case: ownerShares = total, managerShares = 0 |
+| `check_sharePartition_minConstruction` | **PASS** | **Core security property**: for ANY `ownerShares ≤ total` and ANY `feeBound`, the `min(feeBound, total - ownerShares)` construction guarantees `ownerShares + managerShares ≤ totalShares` |
+
+The share partition proof uses a two-layer decomposition: Layer 1 (structural, proven by halmos) shows the `min()` construction in `calcManagerMaxFeeWithdrawShares` is correct for all inputs. Layer 2 (arithmetic, assumed via `vm.assume`) is the floor-division bound `floor(total × k / nav) ≤ total` when `k ≤ nav`, which is a mathematical tautology covered by invariant fuzz testing.
+
+---
+
+## 11. Formally Tested Invariants
 
 The following invariants are verified through stateful fuzz testing (256 runs, depth 100) and targeted audit tests:
 
@@ -266,7 +304,7 @@ The following invariants are verified through stateful fuzz testing (256 runs, d
 
 ---
 
-## 11. Risk Parameters
+## 12. Risk Parameters
 
 | Parameter | Value | Bounds |
 |---|---|---|
@@ -286,7 +324,7 @@ The following invariants are verified through stateful fuzz testing (256 runs, d
 
 ---
 
-## 12. Known Limitations and External Dependencies
+## 13. Known Limitations and External Dependencies
 
 1. **Dolomite upgrade risk** -- Dolomite's GM Wrapper, GM Unwrapper, and Isolation Vault implementations are upgradeable proxies. A Dolomite upgrade could break Basalt's async settlement flow. See Section 6.
 

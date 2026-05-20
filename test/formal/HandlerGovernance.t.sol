@@ -6,15 +6,6 @@ import {Clones} from "openzeppelin-contracts/contracts/proxy/Clones.sol";
 import {VaultCore} from "../../src/core/VaultCore.sol";
 import {VaultState} from "../../src/core/VaultState.sol";
 import {IVaultCoreNftFactory} from "../../src/interfaces/IVaultCoreNftFactory.sol";
-import {
-    HandlerProposal,
-    NotManager,
-    NotNftOwner,
-    NoHandlerProposal,
-    UnknownHandler,
-    ZeroHandler,
-    DuplicateHandler
-} from "../../src/core/vaultCoreLibraries/VaultCoreTypes.sol";
 
 /// @dev Same mock factory as AccessControl tests -- deterministic, no ERC721.
 contract GovernanceMockFactory is IVaultCoreNftFactory {
@@ -37,15 +28,8 @@ contract GovernanceMockFactory is IVaultCoreNftFactory {
 }
 
 /// @title HandlerGovernance -- Halmos formal verification
-/// @notice Proves that handler rotation on VaultCore requires explicit NFT owner consent.
-///         The protocol manager can *propose* a handler swap, but the actual slot mutation
-///         only happens inside acceptHandler, which is gated by onlyNftOwner.
-///
-///   Invariants verified:
-///   1. proposeHandler alone never mutates any handler slot -- it only writes to handlerProposal.
-///   2. acceptHandler is the sole path that writes a new handler into a slot.
-///   3. After acceptHandler, the old handler address is no longer in any slot (no stale references).
-///   4. A proposal for an unknown handler slot reverts (slot validation).
+/// @notice Proves that handler rotation requires explicit NFT owner consent.
+///   Uses low-level calls instead of vm.expectRevert (unsupported in halmos 0.3.x).
 contract HandlerGovernanceTest is Test {
 
     address constant NFT_OWNER = address(0xB001);
@@ -95,10 +79,7 @@ contract HandlerGovernanceTest is Test {
     //  INV-1: proposeHandler never mutates handler slots
     // -----------------------------------------------------------------------
 
-    /// @notice After proposeHandler, all 8 handler slots remain exactly as
-    ///         they were at initialization.  The proposal is stored but dormant.
     function check_proposeHandler_doesNotMutateSlots() public {
-        // Snapshot pre-proposal slots
         address pre_deposit = vaultCore.depositHandler();
         address pre_withdraw = vaultCore.withdrawHandler();
         address pre_manager = vaultCore.managerHandler();
@@ -112,7 +93,6 @@ contract HandlerGovernanceTest is Test {
         vm.prank(PROTOCOL_MANAGER);
         vaultCore.proposeHandler(H_DEPOSIT, newHandler);
 
-        // All slots unchanged
         assert(vaultCore.depositHandler() == pre_deposit);
         assert(vaultCore.withdrawHandler() == pre_withdraw);
         assert(vaultCore.managerHandler() == pre_manager);
@@ -127,24 +107,21 @@ contract HandlerGovernanceTest is Test {
     //  INV-2: acceptHandler requires NFT owner -- manager alone cannot rotate
     // -----------------------------------------------------------------------
 
-    /// @notice The protocol manager (or any non-owner address) cannot call
-    ///         acceptHandler.  This is the consent gate.
     function check_managerCannotAcceptHandler() public {
         vm.prank(PROTOCOL_MANAGER);
         vaultCore.proposeHandler(H_WITHDRAW, address(0xCAFE));
 
-        // Manager tries to accept -- must revert
         vm.prank(PROTOCOL_MANAGER);
-        vm.expectRevert(NotNftOwner.selector);
-        vaultCore.acceptHandler();
+        (bool success,) = address(vaultCore).call(
+            abi.encodeWithSelector(vaultCore.acceptHandler.selector)
+        );
+        assert(!success);
     }
 
     // -----------------------------------------------------------------------
     //  INV-3: full propose-accept cycle correctly replaces exactly one slot
     // -----------------------------------------------------------------------
 
-    /// @notice After the NFT owner accepts a handler proposal, the targeted
-    ///         slot contains the new handler, and all other slots are untouched.
     function check_acceptHandler_replacesCorrectSlot() public {
         address newHandler = address(0xCAFE);
 
@@ -154,10 +131,7 @@ contract HandlerGovernanceTest is Test {
         vm.prank(NFT_OWNER);
         vaultCore.acceptHandler();
 
-        // The deposit slot was replaced
         assert(vaultCore.depositHandler() == newHandler);
-
-        // All other slots untouched
         assert(vaultCore.withdrawHandler() == H_WITHDRAW);
         assert(vaultCore.managerHandler() == H_MANAGER);
         assert(vaultCore.asyncRecoveryHandler() == H_ASYNC);
@@ -166,7 +140,6 @@ contract HandlerGovernanceTest is Test {
         assert(vaultCore.extensionHandler2() == H_EXT2);
         assert(vaultCore.extensionHandler3() == H_EXT3);
 
-        // Proposal is cleared
         (,, bool exists) = vaultCore.handlerProposal();
         assert(!exists);
     }
@@ -175,7 +148,6 @@ contract HandlerGovernanceTest is Test {
     //  INV-4: proposal for non-slot address reverts
     // -----------------------------------------------------------------------
 
-    /// @notice proposeHandler must revert if oldHandler is not one of the 8 slots.
     function check_proposeHandler_rejectsUnknownSlot(address fakeOldHandler) public {
         vm.assume(fakeOldHandler != H_DEPOSIT);
         vm.assume(fakeOldHandler != H_WITHDRAW);
@@ -187,29 +159,33 @@ contract HandlerGovernanceTest is Test {
         vm.assume(fakeOldHandler != H_EXT3);
 
         vm.prank(PROTOCOL_MANAGER);
-        vm.expectRevert(UnknownHandler.selector);
-        vaultCore.proposeHandler(fakeOldHandler, address(0xCAFE));
+        (bool success,) = address(vaultCore).call(
+            abi.encodeWithSelector(vaultCore.proposeHandler.selector, fakeOldHandler, address(0xCAFE))
+        );
+        assert(!success);
     }
 
     // -----------------------------------------------------------------------
     //  INV-5: proposing an existing handler as replacement reverts
     // -----------------------------------------------------------------------
 
-    /// @notice The new handler cannot already occupy a slot (DuplicateHandler guard).
     function check_proposeHandler_rejectsDuplicate() public {
         vm.prank(PROTOCOL_MANAGER);
-        vm.expectRevert(DuplicateHandler.selector);
-        vaultCore.proposeHandler(H_DEPOSIT, H_WITHDRAW);
+        (bool success,) = address(vaultCore).call(
+            abi.encodeWithSelector(vaultCore.proposeHandler.selector, H_DEPOSIT, H_WITHDRAW)
+        );
+        assert(!success);
     }
 
     // -----------------------------------------------------------------------
     //  INV-6: acceptHandler with no pending proposal reverts
     // -----------------------------------------------------------------------
 
-    /// @notice acceptHandler must revert when no proposal exists, even from NFT owner.
     function check_acceptHandler_revertsWithNoProposal() public {
         vm.prank(NFT_OWNER);
-        vm.expectRevert(NoHandlerProposal.selector);
-        vaultCore.acceptHandler();
+        (bool success,) = address(vaultCore).call(
+            abi.encodeWithSelector(vaultCore.acceptHandler.selector)
+        );
+        assert(!success);
     }
 }

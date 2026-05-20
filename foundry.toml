@@ -52,6 +52,11 @@ include_push_bytes = true
 seed = "0x1234"
 failure_persist_dir = "cache/fuzz"
 
+# Halmos profile: via_ir required (stack-too-deep), but no optimizer — simpler bytecode for SMT solver
+[profile.halmos]
+via_ir = true
+optimizer = false
+
 # DO NOT REMOVE lint_on_build = false!
 # Without it, every forge build spams hundreds of lint warnings.
 # Run "forge lint" manually when you actually want to lint.
