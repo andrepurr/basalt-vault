@@ -3,21 +3,9 @@ pragma solidity 0.8.28;
 
 import {Test} from "forge-std/Test.sol";
 
-/// @title ShareInvariant -- Halmos formal verification
-/// @notice Proves share-accounting invariants for all possible inputs.
-///
-///   The share partition proof is split into two layers:
-///
-///   Layer 1 (structural): The min() construction in _managerShares guarantees
-///   ownerShares + managerShares <= totalShares for ANY ownerShares <= totalShares.
-///   This is the actual security property -- proven by halmos without division.
-///
-///   Layer 2 (arithmetic): floor(total * k / nav) <= total when k <= nav.
-///   This is a floor-division tautology, assumed via vm.assume(ownerShares <= total).
-///   Covered by invariant fuzz testing (1M+ runs) and mathematical proof:
-///     k <= nav => total*k <= total*nav => floor(total*k/nav) <= total. QED.
-///   Solidity 0.8.x checked arithmetic reverts on overflow, so the non-reverting
-///   path always satisfies this bound.
+/// @title ShareInvariant — halmos formal verification
+/// @dev Partition proof: structural layer (min construction, halmos) +
+///      arithmetic layer (floor division bound, vm.assume + fuzz).
 contract ShareInvariantTest is Test {
 
     uint256 constant SHARE_UNIT = 1e18;
@@ -62,30 +50,17 @@ contract ShareInvariantTest is Test {
         uint256 ownerShares = uint256(ownerSharesRaw);
         uint256 feeBound = uint256(feeBoundRaw);
 
-        // Layer 2 assumption: floor division result is bounded
-        // Proven: floor(total * k / nav) <= total when k <= nav (checked arith)
-        vm.assume(ownerShares <= total);
+        vm.assume(ownerShares <= total); // floor division bound (fuzz-verified)
 
         uint256 complement = total - ownerShares;
         uint256 managerShares = feeBound < complement ? feeBound : complement;
 
-        // managerShares = min(feeBound, complement) <= complement
-        // ownerShares + complement = total
-        // => ownerShares + managerShares <= total  QED
         assert(ownerShares + managerShares <= total);
     }
 
-    // -----------------------------------------------------------------------
-    //  INV-1c: fee == 0 => managerShares = 0
-    //  When fee is zero, _managerShares early-returns 0.
-    //  ownerShares = floor(total * nav / nav) = total (exact division).
-    //  Sum = total + 0 = total <= total.
-    // -----------------------------------------------------------------------
-
+    /// @dev fee == 0 => managerShares = 0, ownerShares = total
     function check_sharePartition_zeroFee(uint128 totalRaw) public pure {
         uint256 total = uint256(totalRaw) + 1;
-        // fee == 0 => managerShares = 0 (early return)
-        // ownerShares <= total (floor division bound)
         assert(total + 0 <= total);
     }
 

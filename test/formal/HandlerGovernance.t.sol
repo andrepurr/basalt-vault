@@ -27,9 +27,8 @@ contract GovernanceMockFactory is IVaultCoreNftFactory {
     function protocolManager() external view returns (address) { return _protocolManager; }
 }
 
-/// @title HandlerGovernance -- Halmos formal verification
-/// @notice Proves that handler rotation requires explicit NFT owner consent.
-///   Uses low-level calls instead of vm.expectRevert (unsupported in halmos 0.3.x).
+/// @title HandlerGovernance — halmos formal verification of dual-consent invariants
+/// @dev Low-level calls instead of vm.expectRevert (unsupported in halmos 0.3.x).
 contract HandlerGovernanceTest is Test {
 
     address constant NFT_OWNER = address(0xB001);

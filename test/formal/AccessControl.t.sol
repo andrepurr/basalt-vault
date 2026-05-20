@@ -28,9 +28,8 @@ contract HalmosMockFactory is IVaultCoreNftFactory {
     function protocolManager() external view returns (address) { return _protocolManager; }
 }
 
-/// @title AccessControl -- Halmos formal verification
-/// @notice Proves that VaultCore access control gates cannot be bypassed.
-///   Uses low-level calls instead of vm.expectRevert (unsupported in halmos 0.3.x).
+/// @title AccessControl — halmos formal verification of VaultCore ACL invariants
+/// @dev Low-level calls instead of vm.expectRevert (unsupported in halmos 0.3.x).
 contract AccessControlTest is Test {
 
     address constant NFT_OWNER = address(0xA001);
