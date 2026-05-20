@@ -158,7 +158,7 @@ All deployed contracts are immutable. There are no proxies, no admin upgrade pat
 
 ## Development
 
-Built with [Foundry](https://getfoundry.sh/). Solidity 0.8.28 (fixed version, no floating pragma).
+Built with [Foundry](https://getfoundry.sh/). Solidity 0.8.28.
 
 ```bash
 # Build
