@@ -10,9 +10,7 @@ import {BasaltConstants} from "../../../src/libraries/BasaltConstants.sol";
 
 /// @title VaultState unit tests
 contract VaultStateUnit is ForkSetupFull {
-    // ══════════════════════════════════════════════════════════════════════
     // ACCESS CONTROL: onlyVaultCore -- direct calls must revert
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_setDepositState_directCall_reverts() public {
         vm.prank(stranger);
@@ -154,9 +152,7 @@ contract VaultStateUnit is ForkSetupFull {
         vaultState.setRebalanceThresholdDownBps(1000);
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // STATE MACHINE: requireAllIdle
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_requireAllIdle_whenAllIdle_succeeds() public view {
         // Default state after setUp -- all IDLE, should not revert
@@ -195,9 +191,7 @@ contract VaultStateUnit is ForkSetupFull {
         vaultState.requireAllIdle();
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // CONFIG THROUGH MANAGER: verify setters route correctly
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_setTargetLtvBps_throughManager_updatesState() public {
         uint256 newLtv = 4900;
@@ -287,9 +281,7 @@ contract VaultStateUnit is ForkSetupFull {
         );
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // STATE VIEWS: default values after setUp
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_defaultValues_afterSetUp() public view {
         assertEq(uint8(vaultState.depositState()), 0);
@@ -310,9 +302,7 @@ contract VaultStateUnit is ForkSetupFull {
         assertEq(vaultState.vaultCoreClone(), address(vaultCore));
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // INITIALIZE: double init protection
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_initialize_doubleInit_reverts() public {
         address vaultCoreBefore = vaultState.vaultCoreClone();

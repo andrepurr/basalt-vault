@@ -18,7 +18,7 @@ One NFT = one `VaultCore` clone. The vault holds a leveraged GM-BTC/USDC positio
 
 ```
                                     +------------------+
-                                    |  ManagerContract | (Ownable2Step, 5 roles)
+                                    |  ManagerContract | (Ownable2Step, 6 roles)
                                     +------------------+
                                  /      |       |        \
                        configurator  operational  handlerProp  addressProp
@@ -64,7 +64,7 @@ One NFT = one `VaultCore` clone. The vault holds a leveraged GM-BTC/USDC positio
 | `AsyncRecoveryHandler` | Cancel stuck GMX wrap/unwrap after deadline + grace | yes |
 | `FeeAccountingHandler` | Compute + persist HWM performance fee into `VaultState` | yes |
 | `VaultCoreNftFactory` | ERC721, clones `VaultCore`+`VaultState`, holds `protocolManager` | **immutable** |
-| `ManagerContract` | 5 roles, fee hub entry, protocol-manager vote coordinator | **immutable** |
+| `ManagerContract` | 6 roles, fee hub entry, protocol-manager vote coordinator | **immutable** |
 | `FeeSplitter` | ERC20Votes fee share (1e18 total), MasterChef-per-token accumulator, max 20 tracked tokens, skippable tokens | **immutable** |
 | `InitialCoreAddressBook` | Immutable bundle of addresses used at vault creation (includes `dolomiteVault`) | replace w/ 24 h cooldown |
 | `BasaltZapIn` | USDC/stablecoin -> GM conversion (pool-imbalance route selection, async GMX) | **immutable** |

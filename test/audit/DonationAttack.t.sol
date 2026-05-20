@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
-// ═══════════════════════════════════════════════════════════════════════════
 //  AUDIT: Donation Attack & First Depositor Exploit Test Suite
 //
 //  Attack vectors tested:
@@ -19,7 +18,6 @@ pragma solidity 0.8.28;
 //
 //  The fixed-share design eliminates classical vault inflation attacks,
 //  but these tests verify the invariants hold under adversarial conditions.
-// ═══════════════════════════════════════════════════════════════════════════
 
 import {Test} from "forge-std/Test.sol";
 import {Math} from "openzeppelin-contracts/contracts/utils/math/Math.sol";
@@ -45,9 +43,7 @@ contract DonationAttackTest is ForkSetupFull {
         wbtcToken = IERC20(BasaltAddresses.WBTC);
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  FIRST DEPOSITOR ATTACK TESTS
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @notice Verify that SHARE_UNIT = 1e18 is a fixed constant, making
     ///         classical vault inflation (deposit 1 wei, donate to inflate
@@ -124,9 +120,7 @@ contract DonationAttackTest is ForkSetupFull {
         assertEq(smallRedeem, 1_000_000, "tiny share fraction of large collateral must be non-zero");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  DONATION ATTACK TESTS
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @notice Direct GM transfer to VaultCore must not affect the share price.
     ///         NAV is derived from Dolomite collateral readings (position-based),
@@ -252,9 +246,7 @@ contract DonationAttackTest is ForkSetupFull {
         assertEq(navFromMath, 0, "NAV must be 0 when Dolomite position is empty");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  ROUNDING THEFT TESTS
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @notice Repeated small pro-rata operations must not lose value vs a
     ///         single large operation. Tests that Math.mulDiv floor rounding
@@ -322,9 +314,7 @@ contract DonationAttackTest is ForkSetupFull {
         assertLe(wbtcReturned, wbtcExactThird, "WBTC pro-rata must also floor-round");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  EDGE CASE: SHARE MATH BOUNDARY CONDITIONS
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @notice Verify calcProRataGm handles extreme ratios without overflow.
     ///         Uses realistic maximum values for Dolomite GM positions.

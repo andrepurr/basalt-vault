@@ -59,9 +59,7 @@ contract ZapInMathUnit is ForkSetupFull {
         harness = new ZapInMathHarness();
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  calcStableMinOut
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_calcStableMinOut_typicalValues() public view {
         assertEq(harness.calcStableMinOut(1000e6, 6, 6, 100), 990e6, "1000 USDC with 1% slippage should yield 990");
@@ -83,9 +81,7 @@ contract ZapInMathUnit is ForkSetupFull {
         assertEq(harness.calcStableMinOut(1000e6, 6, 18, 100), 990e18, "6->18 decimal scale with 1% slippage");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  quoteWbtcFromUsdc
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_quoteWbtcFromUsdc_typicalValues() public view {
         uint256 result = harness.quoteWbtcFromUsdc(100_000e6, 1e8, 100_000e8);
@@ -99,9 +95,7 @@ contract ZapInMathUnit is ForkSetupFull {
         assertEq(harness.quoteWbtcFromUsdc(0, 1e8, 100_000e8), 0);
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  calcUsdcValueE18 / calcWbtcValueE18
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_calcUsdcValueE18_typicalValues() public view {
         uint256 result = harness.calcUsdcValueE18(1000e6, 1e8);
@@ -117,9 +111,7 @@ contract ZapInMathUnit is ForkSetupFull {
         assertEq(harness.calcWbtcValueE18(0.5e8, 100_000e8), 50_000e18, "0.5 WBTC = $50k");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  calcMinMarketTokens
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_calcMinMarketTokens_typicalValues() public view {
         uint256 result = harness.calcMinMarketTokens(1000e18, 1e18, 100);

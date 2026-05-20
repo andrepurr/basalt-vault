@@ -22,9 +22,7 @@ contract VaultCoreUnit is ForkSetupFull {
         newHandler = address(uint160(0xBEEF01));
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ACCESS CONTROL: proposeHandler
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_proposeHandler_asStranger_reverts() public {
         (, , bool existsBefore) = vaultCore.handlerProposal();
@@ -49,9 +47,7 @@ contract VaultCoreUnit is ForkSetupFull {
         assertTrue(exists, "proposeHandler: proposal should exist");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ACCESS CONTROL: acceptHandler
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_acceptHandler_asStranger_reverts() public {
         address handlerBefore = vaultCore.depositHandler();
@@ -81,9 +77,7 @@ contract VaultCoreUnit is ForkSetupFull {
         assertFalse(exists, "acceptHandler: proposal should be cleared after accept");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ACCESS CONTROL: cancelHandlerProposal
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_cancelHandlerProposal_asStranger_reverts() public {
         vm.prank(address(managerContract));
@@ -128,9 +122,7 @@ contract VaultCoreUnit is ForkSetupFull {
         assertEq(vaultCore.depositHandler(), handlerBefore, "cancel by owner: handler must remain unchanged");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ACCESS CONTROL: proposeBasaltAddresses
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_proposeBasaltAddresses_asStranger_reverts() public {
         (, , bool existsBefore) = vaultCore.basaltAddressesProposal();
@@ -157,9 +149,7 @@ contract VaultCoreUnit is ForkSetupFull {
         assertTrue(exists, "proposeBasaltAddresses: proposal should exist");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ACCESS CONTROL: acceptBasaltAddresses
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_acceptBasaltAddresses_asStranger_reverts() public {
         address mathBefore = vaultCore.basaltMath();
@@ -192,9 +182,7 @@ contract VaultCoreUnit is ForkSetupFull {
         assertFalse(exists, "acceptBasaltAddresses: proposal should be cleared after accept");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ACCESS CONTROL: cancelBasaltAddressesProposal
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_cancelBasaltAddressesProposal_asStranger_reverts() public {
         vm.prank(address(managerContract));
@@ -239,9 +227,7 @@ contract VaultCoreUnit is ForkSetupFull {
         assertEq(vaultCore.basaltState(), stateBefore, "cancel basalt by owner: state must remain unchanged");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ACCESS CONTROL: universalCall
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_universalCall_asStranger_reverts() public {
         assertEq(vaultCore.depositHandler(), address(depositHandler), "pre: deposit handler set");
@@ -252,9 +238,7 @@ contract VaultCoreUnit is ForkSetupFull {
         vaultCore.universalCall(vaultOwner, address(0), "", 0, false);
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // HANDLER PROPOSAL FLOW
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_proposeHandler_thenAccept_replacesHandler() public {
         address oldDepositHandler = vaultCore.depositHandler();
@@ -349,9 +333,7 @@ contract VaultCoreUnit is ForkSetupFull {
         assertEq(vaultCore.basaltState(), stateBefore, "post: basaltState must remain unchanged");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // HANDLER PROPOSAL EDGE CASES
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_proposeHandler_unknownOldHandler_reverts() public {
         (, , bool existsBefore) = vaultCore.handlerProposal();

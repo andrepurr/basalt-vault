@@ -187,7 +187,7 @@ The protocol uses a layered oracle architecture:
 ### Chainlink price feeds
 
 - **BTC/USD:** `0xd0C7...0c57` (max staleness: 90,000s, max price: $10M equivalent)
-- **USDC/USD:** `0x5083...34aD3` (max staleness: 90,000s, max price: $1,000 equivalent)
+- **USDC/USD:** `0x5083...34aD3` (max staleness: 90,000s, max price: $10 equivalent)
 
 Every Chainlink read (`OracleGuard.readChainlinkPrice`) enforces:
 1. **Round completeness:** `answeredInRound >= roundId` (rejects incomplete rounds)
@@ -212,7 +212,7 @@ Rather than trusting a single oracle for GM token pricing, `GMCalculator.sol` re
 
 ---
 
-## 11. Formally Tested Invariants
+## 10. Formally Tested Invariants
 
 The following invariants are verified through stateful fuzz testing (256 runs, depth 100) and targeted audit tests:
 
@@ -255,7 +255,7 @@ The following invariants are verified through stateful fuzz testing (256 runs, d
 
 ### Additional audit test coverage
 
-17 targeted audit test files cover specific attack scenarios:
+16 targeted audit test files cover specific attack scenarios:
 - Delegatecall abuse (handler attempting calls to unauthorized targets)
 - Cross-vault contamination (Vault A operations affecting Vault B)
 - Donation attacks (direct token transfers to manipulate accounting)
@@ -266,7 +266,7 @@ The following invariants are verified through stateful fuzz testing (256 runs, d
 
 ---
 
-## 12. Risk Parameters
+## 11. Risk Parameters
 
 | Parameter | Value | Bounds |
 |---|---|---|
@@ -286,7 +286,7 @@ The following invariants are verified through stateful fuzz testing (256 runs, d
 
 ---
 
-## 13. Known Limitations and External Dependencies
+## 12. Known Limitations and External Dependencies
 
 1. **Dolomite upgrade risk** -- Dolomite's GM Wrapper, GM Unwrapper, and Isolation Vault implementations are upgradeable proxies. A Dolomite upgrade could break Basalt's async settlement flow. See Section 6.
 

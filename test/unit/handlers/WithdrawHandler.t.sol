@@ -74,9 +74,7 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         deal(BasaltAddresses.GM_MARKET_TOKEN, vaultOwner, 200e18);
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  ACCESS CONTROL (Priority 1)
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_withdraw_asStranger_reverts() public {
         _setupVaultWithPosition();
@@ -177,9 +175,7 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         assertGt(maxShares, 0, "fee shares should be non-zero after deposit cycle with fee accrual");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  WITHDRAW BRANCHES (Priority 4 -- exercises CSRE per D-05)
-    // ════════════════════════════════════════════════════════════════════════
 
     // ── Async branch (vault has GM collateral + WBTC debt = AsyncDebt) ───
 
@@ -273,9 +269,7 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         );
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  STATE MACHINE ENFORCEMENT
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_withdraw_whileDepositPending_reverts() public {
         _rollCooldown();
@@ -393,9 +387,7 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         assertEq(uint8(vaultState.withdrawState()), uint8(VaultState.State.IDLE), "state must remain IDLE after revert");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  VIEW TESTS
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_previewWithdraw_emptyVault_reverts() public {
         // Verify vault is truly empty before testing revert
@@ -447,9 +439,7 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         assertGt(ctx.navUsdE18, 0, "context should reflect non-zero NAV");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  HELPERS
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @dev Perform full deposit cycle so vault has GM collateral + WBTC debt for withdraw testing.
     function _setupVaultWithPosition() internal {
@@ -544,9 +534,7 @@ contract WithdrawHandlerUnit is ForkSetupFull {
         return gmE18 / 7e12;
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  FUZZ TESTS (FUZZ-02: withdraw flow edge cases)
-    // ════════════════════════════════════════════════════════════════════════
 
     function testFuzz_withdraw_randomSharesAndSlippage(uint256 sharesSeed, uint256 slippageSeed) public {
         _setupVaultWithPosition();

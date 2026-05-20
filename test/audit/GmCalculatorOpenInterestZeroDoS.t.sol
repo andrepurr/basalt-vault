@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
-// ═══════════════════════════════════════════════════════════════════════════
 //  FINDING: GMCalculator._getOpenInterest reverts when one side has zero OI
 //
 //  Severity: MEDIUM
@@ -19,7 +18,6 @@ pragma solidity 0.8.28;
 //  Root cause: Defensive zero-check is too aggressive for a legitimate state.
 //  Fix: Remove the zero guard or skip the borrowing/PnL computation when
 //       OI for that direction is zero.
-// ═══════════════════════════════════════════════════════════════════════════
 
 import {Test} from "forge-std/Test.sol";
 import {GMCalculator, IGmxDataStore} from "../../src/libraries/GMCalculator.sol";

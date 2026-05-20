@@ -63,9 +63,7 @@ contract DepositHandlerUnit is ForkSetupFull {
         deal(BasaltAddresses.GM_MARKET_TOKEN, vaultOwner, 200e18);
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  ACCESS CONTROL (Priority 1)
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_deposit_asStranger_reverts() public {
         deal(BasaltAddresses.GM_MARKET_TOKEN, stranger, 100e18);
@@ -156,9 +154,7 @@ contract DepositHandlerUnit is ForkSetupFull {
         assertGt(vaultState.totalDepositedGmE18(), 0, "totalDepositedGmE18 should increase after finalize");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  DEPOSIT BRANCH COVERAGE (Priority 4 -- exercises CSRE per D-05)
-    // ════════════════════════════════════════════════════════════════════════
 
     // ── Branch 1: First deposit (creates isolation vault) ─────────────────
 
@@ -239,9 +235,7 @@ contract DepositHandlerUnit is ForkSetupFull {
         assertGt(ctx.gmPriceE18, 0, "GM price should be populated from oracle");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  FINALIZE PATHS
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_finalizeDeposit_afterGmxExecution_succeeds() public {
         _doFirstDeposit();
@@ -309,9 +303,7 @@ contract DepositHandlerUnit is ForkSetupFull {
         assertEq(vaultState.totalDepositedGmE18(), 0, "totalDeposited unchanged after revert");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  STATE MACHINE ENFORCEMENT
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_deposit_whilePending_reverts() public {
         // Initiate first deposit to enter PENDING
@@ -369,9 +361,7 @@ contract DepositHandlerUnit is ForkSetupFull {
         assertGt(vaultState.pendingDepositAmountGmE18(), 0, "pending deposit amount set at max slippage");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  addWbtcAsDeposit
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_addWbtcAsDeposit_zeroAmount_reverts() public {
         _doFirstDepositCycle();
@@ -386,9 +376,7 @@ contract DepositHandlerUnit is ForkSetupFull {
         assertEq(uint8(vaultState.depositState()), uint8(VaultState.State.IDLE), "state unchanged after revert");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  absorbSurplus
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_absorbSurplus_noSurplus_reverts() public {
         _doFirstDepositCycle();
@@ -407,9 +395,7 @@ contract DepositHandlerUnit is ForkSetupFull {
         assertEq(vaultState.totalDepositedGmE18(), totalDepositedBefore, "totalDeposited unchanged after revert");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  DEPOSIT AMOUNT BOUNDARY
-    // ════════════════════════════════════════════════════════════════════════
 
     // NOTE: amountBelowMinimum revert test removed — same delegatecall depth issue.
 
@@ -427,9 +413,7 @@ contract DepositHandlerUnit is ForkSetupFull {
         assertGt(vaultState.pendingDepositAmountGmE18(), 0, "pending deposit amount set at minimum");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  HELPERS
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @dev Initiate first deposit + simulate GMX execution (but do NOT finalize).
     function _doFirstDeposit() internal {
@@ -485,9 +469,7 @@ contract DepositHandlerUnit is ForkSetupFull {
         IDepositCallbackReceiver(_dolomiteGmWrapper()).afterDepositExecution(key, depositData, eventData);
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  FUZZ TESTS (FUZZ-02: deposit flow edge cases)
-    // ════════════════════════════════════════════════════════════════════════
 
     function testFuzz_deposit_randomAmountAndSlippage(uint256 amountGmSeed, uint256 slippageSeed) public {
         uint256 amountGm = bound(amountGmSeed, 1, 100_000e18);

@@ -61,9 +61,7 @@ contract ManagerHandlerUnit is ForkSetupFull {
         deal(BasaltAddresses.GM_MARKET_TOKEN, vaultOwner, 200e18);
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  CONFIG SETTERS (Priority 3) -- via managerContract.onlyConfigurator
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_setTargetLtv_asConfigurator_updatesVaultState() public {
         uint256 newLtv = 5_100; // within [4800, 5200]
@@ -168,9 +166,7 @@ contract ManagerHandlerUnit is ForkSetupFull {
         assertEq(vaultState.targetLtvBps(), ltvBefore, "targetLtv unchanged after OOB revert");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  REBALANCE FLOW (Priority 4)
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_rebalance_emptyVault_reverts() public {
         uint256 ltvBefore = managerHandler.currentLtvBps(IManagerHandlerVaultCore(address(vaultCore)));
@@ -298,9 +294,7 @@ contract ManagerHandlerUnit is ForkSetupFull {
         );
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  VIEW TESTS
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_currentLtvBps_withPosition_returnsNonZero() public {
         _setupVaultWithPosition();
@@ -320,9 +314,7 @@ contract ManagerHandlerUnit is ForkSetupFull {
         );
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  HELPERS
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @dev Perform full deposit cycle so vault has GM collateral + WBTC debt.
     function _setupVaultWithPosition() internal {

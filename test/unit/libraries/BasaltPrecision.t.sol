@@ -35,9 +35,7 @@ contract BasaltPrecisionUnit is ForkSetupFull {
         harness = new BasaltPrecisionHarness();
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  mulDiv (uint256 overload)
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_mulDiv_typicalValues() public view {
         uint256 result = harness.mulDiv(100, 200, 50);
@@ -77,9 +75,7 @@ contract BasaltPrecisionUnit is ForkSetupFull {
         assertEq(result2, 42, "42 * 7 / 7 should be 42");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  mulDiv (signed overload)
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_mulDivSigned_positiveNumerator() public view {
         assertEq(harness.mulDivSigned(100, int256(200), 50), 400);
@@ -89,9 +85,7 @@ contract BasaltPrecisionUnit is ForkSetupFull {
         assertEq(harness.mulDivSigned(100, -int256(200), 50), -400);
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  applyFactor (uint256 overload)
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_applyFactor_typicalValues() public view {
         uint256 factor = FLOAT_PRECISION / 2; // 50%
@@ -119,9 +113,7 @@ contract BasaltPrecisionUnit is ForkSetupFull {
         assertEq(halfResult, max128 / 2, "50% of uint128.max should be uint128.max / 2");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  applyFactor (signed overload)
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_applyFactorSigned_positiveFactor() public view {
         assertEq(harness.applyFactorSigned(1e18, int256(FLOAT_PRECISION / 2)), int256(5e17));

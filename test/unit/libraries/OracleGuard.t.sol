@@ -36,9 +36,7 @@ contract OracleGuardUnit is ForkSetupFull {
         harness = new OracleGuardHarness();
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  CHAINLINK PRICE READS
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_readChainlinkPrice_wbtcFeed_returnsPositive() public view {
         uint256 price = harness.readChainlinkPrice(
@@ -70,9 +68,7 @@ contract OracleGuardUnit is ForkSetupFull {
         assertEq(price, uint256(rawAnswer), "OracleGuard price should match raw Chainlink answer");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  SEQUENCER CHECKS
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_requireSequencerUp_onFork_succeeds() public view {
         harness.requireSequencerUp(CL_SEQ);

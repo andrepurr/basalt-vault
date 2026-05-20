@@ -46,9 +46,7 @@ contract ManagerFeeFeeSplitterHard is Test {
         v.initialize(address(vc), address(0));
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
     //  BasaltMath — HWM & performance fee (look for overflow / wrong floor)
-    // ═══════════════════════════════════════════════════════════════════════════
 
     function testFuzz_perfFee_leqDelta(uint256 profit, uint256 prevHwm, uint256 feeBps) public view {
         feeBps = bound(feeBps, 0, BasaltConstants.BPS);
@@ -98,9 +96,7 @@ contract ManagerFeeFeeSplitterHard is Test {
         assertEq(y, x > sub ? x - sub : 0);
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
     //  VaultState — mirrors `subAccruedManagerFeeUsdE18` / `setFeeAccounting`
-    // ═══════════════════════════════════════════════════════════════════════════
 
     function testFuzz_vaultState_sub_saturates(uint256 start, uint256 w) public {
         start = bound(start, 0, type(uint128).max);
@@ -119,9 +115,7 @@ contract ManagerFeeFeeSplitterHard is Test {
         assertEq(v.managerAccruedFeeUsdE18(), 42e18);
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
     //  FeeSplitter + ManagerContract — conservation & access
-    // ═══════════════════════════════════════════════════════════════════════════
 
     function _deployHub() internal returns (ERC20Mock token, FeeSplitter splitter, ManagerContract mgr) {
         address me = address(this);

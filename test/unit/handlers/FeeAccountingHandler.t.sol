@@ -39,9 +39,7 @@ contract FeeAccountingHandlerUnit is ForkSetupFull {
         IERC20(BasaltAddresses.GM_MARKET_TOKEN).approve(address(depositHandler), type(uint256).max);
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  ACCESS CONTROL (Priority 1)
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_accrueManagerFee_asStranger_reverts() public {
         uint256 feeBefore = vaultState.managerAccruedFeeUsdE18();
@@ -92,9 +90,7 @@ contract FeeAccountingHandlerUnit is ForkSetupFull {
         assertGe(vaultState.highWaterMarkProfitUsdE18(), hwmBefore, "HWM should not decrease after accrual");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  FEE CALCULATION CORRECTNESS (Priority 2)
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_accrueManagerFee_withProfit_updatesHwm() public {
         _doFirstDepositCycle();
@@ -228,9 +224,7 @@ contract FeeAccountingHandlerUnit is ForkSetupFull {
         assertEq(hwmAfterSecond, hwmAfterFirst, "double accrual should not increase HWM");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  EDGE CASES
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_calculateManagerFee_emptyVault_returnsZero() public view {
         (, uint256 profit,, uint256 performanceFee,,) = feeAccountingHandler.calculateManagerFee(
@@ -271,9 +265,7 @@ contract FeeAccountingHandlerUnit is ForkSetupFull {
         assertGe(vaultState.managerAccruedFeeUsdE18(), feeBefore, "fee must not decrease after direct accrual");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  REGRESSION — BAS-1 (performance fee was always zero)
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @dev    Pre-fix: `targetVaultCore.performanceFeeBps()` returned 0 (uninitialized
     ///         storage in VaultCore) → `performanceFeeUsdE18 = profitDelta * 0 / BPS = 0`.
@@ -360,9 +352,7 @@ contract FeeAccountingHandlerUnit is ForkSetupFull {
         revert("managementFeeBps slot not found");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  HELPERS
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @dev Simulate profit by reducing totalDepositedUsdE18 to 1 wei so that
     ///      profit = NAV - deposited + withdrawn > 0. Uses vm.store on VaultState

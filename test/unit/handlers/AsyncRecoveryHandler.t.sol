@@ -50,9 +50,7 @@ contract AsyncRecoveryHandlerUnit is ForkSetupFull {
         deal(BasaltAddresses.GM_MARKET_TOKEN, vaultOwner, 200e18);
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  ACCESS CONTROL
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_nextUnstuckAt_asStranger_reverts() public {
         // Pre-condition: stranger is neither vaultOwner nor protocolManager
@@ -98,9 +96,7 @@ contract AsyncRecoveryHandlerUnit is ForkSetupFull {
         assertEq(uint8(vaultState.depositState()), stateBefore, "deposit state must not change on revert");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  VIEWS -- IDLE VAULT
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_nextUnstuckAt_whenIdle_returnsZero() public {
         vm.prank(vaultOwner);
@@ -119,9 +115,7 @@ contract AsyncRecoveryHandlerUnit is ForkSetupFull {
         assertGt(bytes(reason).length, 0, "reason should be non-empty when blocked");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  UNSTUCK FLOW -- PENDING STATE
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_unstuckPending_whenIdle_reverts() public {
         // Pre-condition: vault must be idle
@@ -181,9 +175,7 @@ contract AsyncRecoveryHandlerUnit is ForkSetupFull {
         assertLe(grace, 86_400, "grace period should be <= 1 day");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  HELPERS
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @dev Start a deposit but do NOT simulate GMX execution or finalize.
     ///      This leaves the vault in deposit-PENDING state.

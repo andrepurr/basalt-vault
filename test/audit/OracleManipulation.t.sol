@@ -48,9 +48,7 @@ contract OracleManipulation is Test {
         vm.warp(1_700_000_000);
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  HELPERS — mock Chainlink latestRoundData responses
-    // ════════════════════════════════════════════════════════════════════════
 
     function _mockLatestRoundData(
         address oracle,
@@ -91,9 +89,7 @@ contract OracleManipulation is Test {
         );
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  1. STALE PRICE
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @notice Oracle updatedAt exceeds WBTC max age — must revert OracleStalePrice.
     function test_oracle_stalePrice_reverts() public {
@@ -122,9 +118,7 @@ contract OracleManipulation is Test {
         );
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  2. ZERO PRICE
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @notice Oracle returns price = 0 — must revert OracleNonPositivePrice.
     function test_oracle_zeroPrice_reverts() public {
@@ -151,9 +145,7 @@ contract OracleManipulation is Test {
         );
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  3. NEGATIVE PRICE
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @notice Oracle returns price = -1 — must revert OracleNonPositivePrice.
     function test_oracle_negativePrice_reverts() public {
@@ -180,9 +172,7 @@ contract OracleManipulation is Test {
         );
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  4. MAX PRICE — OVERFLOW GUARD
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @notice Oracle returns type(int256).max — must revert OraclePriceTooHigh
     ///         because the value exceeds ORACLE_WBTC_MAX_PRICE_E8.
@@ -262,9 +252,7 @@ contract OracleManipulation is Test {
         );
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  5. SEQUENCER DOWN
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @notice Sequencer feed returns answer != 0 (meaning down) — must revert SequencerDown.
     function test_oracle_sequencerDown_reverts() public {
@@ -297,9 +285,7 @@ contract OracleManipulation is Test {
         harness.requireSequencerUp(IChainlinkAggregator(MOCK_SEQUENCER));
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  6. SEQUENCER JUST UP — GRACE PERIOD
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @notice Sequencer just came back up (within grace period) — must revert SequencerGracePeriod.
     function test_oracle_sequencerJustUp_gracePeriod_reverts() public {
@@ -364,9 +350,7 @@ contract OracleManipulation is Test {
         harness.requireSequencerUp(IChainlinkAggregator(MOCK_SEQUENCER));
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  7. INCOMPLETE ROUND
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @notice answeredInRound < roundId — must revert OracleIncompleteRound.
     function test_oracle_roundNotComplete_reverts() public {
@@ -429,9 +413,7 @@ contract OracleManipulation is Test {
         assertEq(price, uint256(WBTC_PRICE_E8));
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  8. PRICE DEVIATION BETWEEN FEEDS
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @notice Both WBTC and USDC feeds return valid prices independently
     ///         but with a 50% deviation between them relative to expected peg.
@@ -506,9 +488,7 @@ contract OracleManipulation is Test {
         );
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  9. DECIMAL NORMALIZATION (CL 8 decimals → GMX 30 decimals)
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @notice Verify that Chainlink E8 price * CL_TO_GMX (1e22) produces the correct
     ///         E30 value used by GMX without overflow for realistic WBTC prices.
@@ -555,9 +535,7 @@ contract OracleManipulation is Test {
         assertEq(priceE30, 1e30, "USDC $1.00 in GMX precision = 1e30");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  BOUNDARY: STALENESS EXACTLY AT THRESHOLD
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @notice updatedAt exactly at max age boundary — accepted (not stale).
     ///         Code: `block.timestamp - updatedAt > maxAge` — equality passes.
@@ -607,9 +585,7 @@ contract OracleManipulation is Test {
         );
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  COMBINED: MULTIPLE FAILURE MODES
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @notice When both incomplete round AND stale price exist, incomplete round
     ///         is checked first (line 30 before line 32 in OracleGuard).

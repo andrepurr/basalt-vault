@@ -1,17 +1,15 @@
 ![Basalt Vault](./resources/banner.png)
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Arbitrum_One-28A0F0?style=flat&logo=arbitrum&logoColor=white" alt="Arbitrum" />
-  <img src="https://img.shields.io/badge/Solidity_0.8.28-363636?style=flat&logo=solidity&logoColor=white" alt="Solidity" />
-  <img src="https://img.shields.io/badge/Foundry-000000?style=flat&logo=ethereum&logoColor=white" alt="Foundry" />
-  <img src="https://img.shields.io/badge/License-BUSL--1.1-blue?style=flat" alt="License" />
-</p>
+![Arbitrum](https://img.shields.io/badge/Arbitrum_One-28A0F0?style=flat&logo=arbitrum&logoColor=white)
+![Solidity](https://img.shields.io/badge/Solidity_0.8.28-363636?style=flat&logo=solidity&logoColor=white)
+![Foundry](https://img.shields.io/badge/Foundry-000000?style=flat&logo=ethereum&logoColor=white)
+![License](https://img.shields.io/badge/License-BUSL--1.1-blue?style=flat)
 
 ---
 
 ## What It Is
 
-> **Backtested over 2 years of on-chain data: 19.7% APY, -5.7% max drawdown, 2 rebalances.** See [docs/BACKTESTS.md](docs/BACKTESTS.md).
+> **Backtested over 2 years of on-chain data: 19.7% APY, -5.3% max drawdown, 3 rebalances.** See [docs/BACKTESTS.md](docs/BACKTESTS.md).
 
 
 Basalt Vault earns yield from the GMX v2 GM BTC/USDC pool while fully hedging BTC price exposure. Deposit USDC, earn delta-neutral yield from your own isolated vault.
@@ -48,10 +46,6 @@ When the hedge ratio drifts from target, the keeper triggers a rebalance:
 - **Over-hedged** (LTV above target) -- sell GM for WBTC, repay debt
 - **Under-hedged** (LTV below target) -- borrow more WBTC, wrap to GM
 
-### Emergency Mode
-
-Irreversible last resort. Position is unwound in chunks with decaying slippage. Anyone can execute emergency operations -- no single point of failure.
-
 ---
 
 ## Architecture
@@ -82,19 +76,11 @@ Irreversible last resort. Position is unwound in chunks with decaying slippage. 
            > GMX async wrap/unwrap (keeper-driven settlement)
 ```
 
-### Key Design Decisions
+### Design Notes
 
-| Aspect | Design |
-|--------|--------|
-| **Vault isolation** | 1 NFT = 1 VaultCore clone. Each user gets their own Dolomite isolation position. |
-| **Handler pattern** | VaultCore is a dumb executor. All logic lives in stateless handlers, routed via `universalCall`. |
-| **Handler upgrades** | Two-step: protocol manager proposes, NFT owner accepts. Either side can cancel. |
-| **Pricing** | Single source: Dolomite (chained from Chainlink). No direct Chainlink price reads for NAV/LTV. |
-| **Risk parameters** | Target LTV 50% (range 48-52%), hard cap 70%, Dolomite LT ~83.8%. |
-| **Fees** | 20% HWM performance fee. No management fee by default. |
-| **Fee distribution** | FeeSplitter (ERC20Votes, MasterChef-style accumulator). 80% vote threshold to rotate protocol manager (simple majority after 180-day timeout to prevent deadlock). |
-| **Owner fallback** | ManagerContract owner can perform operational/configurator/proposer actions as emergency fallback. feeCollector stays independent. |
-| **Async settlement** | All GMX wrap/unwrap operations are async (~2s). Recovery after deadline + 10 min grace. |
+Each user gets their own VaultCore clone (1 NFT = 1 vault) with a dedicated Dolomite isolation account -- no shared pools, no commingling. VaultCore is a dumb executor; all logic lives in stateless singleton handlers routed via `universalCall`. Handler upgrades are two-step: manager proposes, NFT owner accepts, either side can cancel.
+
+Pricing flows from Dolomite (chained from Chainlink) with a 0.25% spread guard. Target LTV 50% (tunable 48-52%), hard cap 70%, Dolomite liquidation at ~83.8%. Fees are 20% HWM performance fee, distributed through FeeSplitter (ERC20Votes, MasterChef-style accumulator). All GMX wrap/unwrap operations settle async (~2s), with recovery after deadline + 10 min grace.
 
 ---
 
@@ -158,21 +144,9 @@ All deployed contracts are immutable. There are no proxies, no admin upgrade pat
 Built with [Foundry](https://getfoundry.sh/). Solidity 0.8.28.
 
 ```bash
-# Build
 forge build
-
-# Test (requires Arbitrum fork, uses Anvil cache)
-./scripts/run-tests.sh
-```
-
-### Verification
-
-```bash
-# Formal verification (Halmos)
-./scripts/run-halmos.sh
-
-# Mutation testing
-./scripts/run-mutation.sh
+forge test --fork-url <arbitrum-rpc>   # all tests run against Arbitrum fork
+halmos                                  # formal verification (reads halmos.toml)
 ```
 
 ### Project Structure
@@ -190,12 +164,3 @@ src/
   interfaces/     All interface definitions
 ```
 
----
-
-## Roadmap
-
-This is the first vault in the Basalt protocol family. Next steps:
-
-- Additional GM market vaults (ETH/USDC, SOL/USDC)
-- Meta-vaults aggregating across individual market vaults
-- Cross-chain deployment

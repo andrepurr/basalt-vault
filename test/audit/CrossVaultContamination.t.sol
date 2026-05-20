@@ -13,9 +13,7 @@ import {IManagerHandlerVaultCore} from "../../src/interfaces/IManagerHandlerVaul
 ///         The protocol uses shared handler instances across all vaults; these tests prove
 ///         per-vault state isolation through the VaultState clone boundary.
 contract CrossVaultContaminationTest is ForkSetupFull {
-    // ═══════════════════════════════════════════════════════════════════════
     //  VAULT B FIXTURES
-    // ═══════════════════════════════════════════════════════════════════════
 
     address internal vaultOwnerB;
     uint256 internal vaultTokenIdB;
@@ -30,9 +28,7 @@ contract CrossVaultContaminationTest is ForkSetupFull {
         vaultStateB = VaultState(vaultCoreB.basaltState());
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
     //  HELPERS
-    // ═══════════════════════════════════════════════════════════════════════
 
     /// @dev Advance past the global action cooldown for a given vault state.
     function _rollPastCooldown(VaultState vs) internal {
@@ -130,9 +126,7 @@ contract CrossVaultContaminationTest is ForkSetupFull {
         );
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
     //  ISOLATION INVARIANTS
-    // ═══════════════════════════════════════════════════════════════════════
 
     /// @notice Each vault clone gets its own VaultState; verify they are distinct addresses.
     function test_vaultState_addresses_areDistinct() public view {
@@ -155,9 +149,7 @@ contract CrossVaultContaminationTest is ForkSetupFull {
         vaultState.setDepositState(VaultState.State.PENDING);
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
     //  TEST 1: deposit into vault A does not affect vault B shares/totals
-    // ═══════════════════════════════════════════════════════════════════════
 
     /// @notice Directly set pending deposit accounting on vault A via its VaultCore,
     ///         then verify vault B deposit totals remain zero.
@@ -186,9 +178,7 @@ contract CrossVaultContaminationTest is ForkSetupFull {
         _assertSnapshotsEqual(snapshotBBefore, snapshotBAfter, "vaultB after vaultA deposit");
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
     //  TEST 2: deposit into vault A sets PENDING, vault B stays IDLE
-    // ═══════════════════════════════════════════════════════════════════════
 
     function test_deposit_vaultA_doesNotAffectVaultB_state() public {
         // Both start IDLE
@@ -208,9 +198,7 @@ contract CrossVaultContaminationTest is ForkSetupFull {
         assertEq(uint8(vaultStateB.rebalanceState()), uint8(VaultState.State.IDLE), "B rebalance still IDLE");
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
     //  TEST 3: withdraw from vault A does not affect vault B balances
-    // ═══════════════════════════════════════════════════════════════════════
 
     function test_withdraw_vaultA_doesNotAffectVaultB_balances() public {
         VaultSnapshot memory snapshotBBefore = _snapshot(vaultStateB);
@@ -236,9 +224,7 @@ contract CrossVaultContaminationTest is ForkSetupFull {
         _assertSnapshotsEqual(snapshotBBefore, snapshotBAfter, "vaultB after vaultA withdraw");
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
     //  TEST 4: fee accrual on vault A does not affect vault B
-    // ═══════════════════════════════════════════════════════════════════════
 
     function test_fee_accrual_vaultA_doesNotAffectVaultB() public {
         VaultSnapshot memory snapshotBBefore = _snapshot(vaultStateB);
@@ -263,9 +249,7 @@ contract CrossVaultContaminationTest is ForkSetupFull {
         assertEq(vaultStateB.highWaterMarkProfitUsdE18(), 0, "B HWM must be 0");
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
     //  TEST 5: deadman trigger on vault A does not affect vault B
-    // ═══════════════════════════════════════════════════════════════════════
 
     function test_deadman_vaultA_doesNotAffectVaultB() public {
         VaultSnapshot memory snapshotBBefore = _snapshot(vaultStateB);
@@ -292,9 +276,7 @@ contract CrossVaultContaminationTest is ForkSetupFull {
         assertEq(vaultStateB.managerAccruedFeeUsdE18(), 0, "B accrued fee 0");
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
     //  TEST 6: target LTV on vault A does not affect vault B
-    // ═══════════════════════════════════════════════════════════════════════
 
     function test_rebalance_vaultA_doesNotAffectVaultB_ltv() public {
         uint256 vaultBTargetLtvBefore = vaultStateB.targetLtvBps();
@@ -330,9 +312,7 @@ contract CrossVaultContaminationTest is ForkSetupFull {
         );
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
     //  TEST 7: concurrent deposits into both vaults are independent
-    // ═══════════════════════════════════════════════════════════════════════
 
     function test_concurrent_deposits_twoVaults_independent() public {
         uint256 depositA_gm = 100e18;

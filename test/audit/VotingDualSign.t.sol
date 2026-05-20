@@ -113,7 +113,7 @@ contract VotingDualSignTest is Test {
         managerContract.signProtocolManagerChangeCancel(proposalId);
 
         // yesWeight stays at the holder's full weight; cancelWeight stays 0.
-        (,,, uint256 yesWeight, uint256 cancelWeight,,) = managerContract.protocolManagerProposals(proposalId);
+        (,,, uint256 yesWeight, uint256 cancelWeight,,,) = managerContract.protocolManagerProposals(proposalId);
         assertEq(yesWeight, 0.8e18, "yesWeight = holder's full weight");
         assertEq(cancelWeight, 0, "cancelWeight blocked at 0");
     }
@@ -133,7 +133,7 @@ contract VotingDualSignTest is Test {
         vm.expectRevert(AlreadySignedOpposite.selector);
         managerContract.signProtocolManagerChange(proposalId);
 
-        (,,, uint256 yesWeight, uint256 cancelWeight,,) = managerContract.protocolManagerProposals(proposalId);
+        (,,, uint256 yesWeight, uint256 cancelWeight,,,) = managerContract.protocolManagerProposals(proposalId);
         assertEq(yesWeight, 0, "yesWeight blocked at 0");
         assertEq(cancelWeight, 0.8e18, "cancelWeight = holder's full weight");
     }
@@ -166,7 +166,7 @@ contract VotingDualSignTest is Test {
         managerContract.signProtocolManagerChange(proposalId);
 
         // yesWeight = 30 + 50 = 80; cancelWeight = 0; sum = 80 ≤ 100.
-        (,,, uint256 yesWeight, uint256 cancelWeight,,) = managerContract.protocolManagerProposals(proposalId);
+        (,,, uint256 yesWeight, uint256 cancelWeight,,,) = managerContract.protocolManagerProposals(proposalId);
         assertEq(yesWeight, 0.8e18, "yesWeight = 80%");
         assertEq(cancelWeight, 0, "cancelWeight = 0");
         assertLe(yesWeight + cancelWeight, 1e18, "total participation <= 100% of supply");

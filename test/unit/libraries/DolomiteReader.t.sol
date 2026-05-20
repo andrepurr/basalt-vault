@@ -52,9 +52,7 @@ contract DolomiteReaderUnit is ForkSetupFull {
         harness = new DolomiteReaderHarness();
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  PRICE READS
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_getGmPriceE18_returnsPositive() public view {
         uint256 price = harness.getGmPriceE18(DOLOMITE);
@@ -83,9 +81,7 @@ contract DolomiteReaderUnit is ForkSetupFull {
         assertLe(price, 5e33, "WBTC price too high (> $500k at E28)");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  BORROW INDEX
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_getWbtcBorrowIndexE18_returnsAboveOne() public view {
         uint256 index = harness.getWbtcBorrowIndexE18(DOLOMITE);
@@ -94,9 +90,7 @@ contract DolomiteReaderUnit is ForkSetupFull {
         assertLe(index, 10e18, "WBTC borrow index should be < 10x");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  EMPTY VAULT -- no isolation vault address
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_nav_noIsolationVault_returnsZero() public view {
         assertEq(harness.getActualNavUsdE18(DOLOMITE, address(0), IBasaltMath(address(basaltMath))), 0);

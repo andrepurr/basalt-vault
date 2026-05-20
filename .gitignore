@@ -1,16 +1,12 @@
 
-# === Soldrium (auto-managed, do not commit) ===
+# === Local tooling (not project source) ===
 .soldrium/
 .claude/
 CLAUDE.md
 .cursor/
 .mcp.json
 .env
-scripts/
-
-# === Local docs (not committed) ===
-docs/temp
-docs/signer-update.md
+.env.bak
 
 # === Foundry ===
 out/
@@ -18,12 +14,12 @@ cache/
 foundry.lock
 broadcast/
 .stashed_tests/
+.stashed_src/
 
-# === IDE / MCP (local snapshots, not project source) ===
+# === IDE ===
 .playwright-mcp/
-
-# === Wake (Solidity Tools) — local IDE noise ===
 .wake/
+.vscode/
 pytypes/
 wake.toml
 
@@ -32,29 +28,19 @@ test-logs/
 slither-report.json
 slither-output.txt
 coverage-output.txt
+halmos-logs/
+halmos-run.log
+gambit_out*/
 
 # === Backups ===
 backups/
 
-# === Others ===
-.stached_src/
-.vscode/deploy/stats-fetcher/node_modules/
-.env.bak
-halmos-logs/
-halmos-run.log
-
-# === Math modelling (local exploration, not project source) ===
-math-modelling/
-
-# === Runtime logs (keeper-bot, stats-fetcher, etc.) ===
+# === Runtime logs ===
 logs/
 
-# === Personal scratchpad (not project source) ===
-docs/todo.txt
-docs/todo
-
-gambit_out*/
-screens-debug/
+# === Personal scratchpad ===
+docs/todo*
+docs/*.pdf
 
 # === Frontend ===
 temp/
@@ -63,29 +49,16 @@ web/dist/
 web/.env
 web/tmp/
 web/design-system-ref/
-
-# === Screenshots and debug images ===
-# *.png
--L
-
-# === Fix tracking (local only) ===
-FIX-STATUSES.md
-
-# === Local dev notes (not project source) ===
-TESTS_BEST_PRACTICES_FOR_ANVIL_CACHE.md
-PHASE3-BUGS.md
-
-# === Tools (local) ===
-tools/
-
-# === Temp scripts and generated PDFs ===
-tmp-run.sh
-docs/*.pdf
-handoff.md
-DEPLOY-REVIEW.md
-
-# === Build caches (never commit) ===
 web/.vite/
 web/tsconfig.app.tsbuildinfo
+
+# === Temp / local-only ===
+tmp-run.sh
+handoff.md
+TODO.md
+DEPLOY-REVIEW.md
+FIX-STATUSES.md
+
+# === Build caches ===
 __pycache__/
 *.pyc

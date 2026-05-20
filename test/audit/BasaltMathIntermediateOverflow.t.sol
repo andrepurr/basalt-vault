@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
-// ═══════════════════════════════════════════════════════════════════════════
 //  FINDING: BasaltMath.calcGmReceivedMinE18 intermediate overflow via plain *
 //
 //  Severity: MEDIUM
@@ -39,7 +38,6 @@ pragma solidity 0.8.28;
 //    is close to uint256.max / BPS.
 //
 //  This test proves the overflow scenario for calcGmReceivedMinE18.
-// ═══════════════════════════════════════════════════════════════════════════
 
 import {Test} from "forge-std/Test.sol";
 import {BasaltMath} from "../../src/pure/BasaltMath.sol";

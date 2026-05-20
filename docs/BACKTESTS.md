@@ -33,7 +33,7 @@ Source: `web/src/lib/chartData.json` and `landingContent.ts`
 | 50/50 BTC/USDC | $12,925 | +29.3% |
 | BTC HODL | $11,643 | +16.4% |
 
-Basalt outperforms all benchmarks with dramatically lower risk (max DD -5.7% vs -7.6% for unhedged GM).
+Basalt outperforms all benchmarks with lower drawdown (-5.7% vs -7.6% for unhedged GM).
 
 ---
 

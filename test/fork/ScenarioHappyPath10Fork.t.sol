@@ -65,9 +65,7 @@ contract ScenarioHappyPath10Fork is ForkSetupFull {
         IERC20(BasaltAddresses.GM_MARKET_TOKEN).approve(address(depositHandler), type(uint256).max);
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  THE SCENARIO
-    // ════════════════════════════════════════════════════════════════════════
 
     function testE2E_scenario10StepsDeterministic() public {
         uint256 firstDepositMsgValue = _firstDepositMsgValue();
@@ -186,9 +184,7 @@ contract ScenarioHappyPath10Fork is ForkSetupFull {
         _logStep(10, "scenario complete - all states IDLE, accumulators monotonic");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  INTERNAL HELPERS
-    // ════════════════════════════════════════════════════════════════════════
 
     /// @dev Same pro-rata as WithdrawHandler async branch (denominator SHARE_UNIT).
     function _expectedGmToSellE18(uint256 sharesToWithdrawE18) internal view returns (uint256) {

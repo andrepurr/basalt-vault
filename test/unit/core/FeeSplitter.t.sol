@@ -30,9 +30,7 @@ contract FeeSplitterUnit is ForkSetupFull {
         shareHolderB = address(uint160(0x2001));
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ACCESS CONTROL: setManagerContract
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_setManagerContract_asStranger_reverts() public {
         // Stranger is not the initialOwner of feeSplitter — reverts before reaching the one-shot guard.
@@ -89,9 +87,7 @@ contract FeeSplitterUnit is ForkSetupFull {
         assertEq(freshSplitter.managerContract(), address(0), "managerContract still zero after revert");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ACCESS CONTROL: addTrackedToken
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_addTrackedToken_asStranger_reverts() public {
         uint256 lenBefore = feeSplitter.trackedTokensLength();
@@ -117,9 +113,7 @@ contract FeeSplitterUnit is ForkSetupFull {
         assertEq(feeSplitter.isTrackedToken(IERC20(USDT)), true, "addTrackedToken: USDT should be tracked");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ACCESS CONTROL: notifyReward
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_notifyReward_asStranger_reverts() public {
         // Stranger has 0 shares and is not managerContract
@@ -146,9 +140,7 @@ contract FeeSplitterUnit is ForkSetupFull {
         assertEq(acc, 0, "notifyReward by shareholder with no delta: accPerShare should be 0");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ACCESS CONTROL: release -- holder OR operational
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_release_asStranger_reverts() public {
         // Stranger holds 0 shares and is not operational — reverts.
@@ -202,9 +194,7 @@ contract FeeSplitterUnit is ForkSetupFull {
         assertEq(feeSplitter.totalReleasedByToken(usdc), rewardAmount, "totalReleasedByToken tracks released amount");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // FEE ACCOUNTING
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_notifyReward_updatesAccPerShare() public {
         uint256 rewardAmount = 500e6; // 500 USDC
@@ -303,9 +293,7 @@ contract FeeSplitterUnit is ForkSetupFull {
         assertEq(relBAfter, 0, "releasable B after transfer: should be 0 (no reward since transfer)");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // TRACKED TOKENS
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_trackedTokensLength_afterDeploy_returnsFour() public view {
         assertEq(feeSplitter.trackedTokensLength(), 4, "trackedTokensLength: should be 4 after deploy");
@@ -355,9 +343,7 @@ contract FeeSplitterUnit is ForkSetupFull {
         assertEq(feeSplitter.trackedTokensLength(), lenBefore, "length unchanged after duplicate add attempt");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // EDGE CASES
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_notifyReward_zeroBalance_noRevert() public {
         // FeeSplitter has 0 USDC balance -- notifyReward should not revert
@@ -445,9 +431,7 @@ contract FeeSplitterUnit is ForkSetupFull {
         );
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // FUZZ TESTS (FUZZ-03: reward distribution properties)
-    // ══════════════════════════════════════════════════════════════════════
 
     /// @notice Conservation: splitter balance + released == original reward (INV-FS-001).
     function testFuzz_notifyReward_conservationAcrossReleases(uint256 rewardAmount, uint256 releaseFraction) public {

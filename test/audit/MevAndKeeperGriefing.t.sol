@@ -450,7 +450,7 @@ contract MevAndKeeperGriefing is ForkSetupFull {
         );
 
         // The snapshot is block.number - 1 (the block BEFORE the proposal).
-        (, , uint256 snapshot, , , , ) = managerContract.protocolManagerProposals(proposalId);
+        (, , uint256 snapshot, , , , , ) = managerContract.protocolManagerProposals(proposalId);
         assertEq(snapshot, block.number - 1, "snapshot should be block.number - 1");
 
         // -- STEP 2: In the NEXT block, flashBorrower acquires BFS tokens --

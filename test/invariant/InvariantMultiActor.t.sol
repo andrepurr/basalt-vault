@@ -712,9 +712,7 @@ contract InvariantMultiActor is ForkSetupFull {
         snapshotB_totalWithdrawnUsd = vaultStateB.totalWithdrawnUsdE18();
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
     //  INVARIANTS
-    // ═══════════════════════════════════════════════════════════════════════════
 
     /// @notice INV-MA-01: VaultA state changes must not affect vaultB's accounting.
     ///         If ownerActor never touched vaultB and secondOwnerActor never touched vaultA,
@@ -864,9 +862,7 @@ contract InvariantMultiActor is ForkSetupFull {
         );
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
     //  INTERNAL HELPERS
-    // ═══════════════════════════════════════════════════════════════════════════
 
     function _assertAtMostOnePending(VaultState vs, string memory vaultLabel) internal view {
         uint8 pendingCount = 0;

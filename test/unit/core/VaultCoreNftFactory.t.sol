@@ -9,9 +9,7 @@ import {IInitialCoreAddressBook} from "../../../src/interfaces/IInitialCoreAddre
 
 /// @title VaultCoreNftFactory access control and creation unit tests
 contract VaultCoreNftFactoryUnit is ForkSetupFull {
-    // ══════════════════════════════════════════════════════════════════════
     // createVaultCore -- permissionless
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_createVaultCore_asAnyone_succeeds() public {
         vm.prank(stranger);
@@ -31,9 +29,7 @@ contract VaultCoreNftFactoryUnit is ForkSetupFull {
         assertGt(tokenId, 0, "minted tokenId should be > 0");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // setProtocolManager -- restricted to current protocolManager
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_setProtocolManager_asStranger_reverts() public {
         address pmBefore = vaultCoreNftFactory.protocolManager();
@@ -64,9 +60,7 @@ contract VaultCoreNftFactoryUnit is ForkSetupFull {
         );
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // setInitialCoreAddressBook -- onlyOwner (factoryOwner)
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_setInitialCoreAddressBook_asStranger_reverts() public {
         address bookBefore = address(vaultCoreNftFactory.initialCoreAddressBook());
@@ -100,9 +94,7 @@ contract VaultCoreNftFactoryUnit is ForkSetupFull {
         );
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ownerOfVault -- view correctness
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_ownerOfVault_returnsCorrectOwner() public view {
         address owner = vaultCoreNftFactory.ownerOfVault(address(vaultCore));

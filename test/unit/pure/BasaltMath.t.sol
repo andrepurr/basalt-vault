@@ -10,9 +10,7 @@ contract BasaltMathUnit is ForkSetupFull {
     uint256 internal constant MAX128 = type(uint128).max;
     uint256 internal constant BPS = 10_000;
 
-    // ════════════════════════════════════════════════════════════════════
     //  1. PRICE SCALE CONVERSIONS
-    // ════════════════════════════════════════════════════════════════════
 
     // --- toWbtcPriceE18FromE28 ---
 
@@ -81,9 +79,7 @@ contract BasaltMathUnit is ForkSetupFull {
         assertLe(result, MAX128, "E8 result must not exceed original E18 input");
     }
 
-    // ════════════════════════════════════════════════════════════════════
     //  2. USD VALUATION
-    // ════════════════════════════════════════════════════════════════════
 
     // --- calcCollUsdE18 ---
 
@@ -228,9 +224,7 @@ contract BasaltMathUnit is ForkSetupFull {
         assertEq(result, 102_500e18, "NAV should be $102.5k");
     }
 
-    // ════════════════════════════════════════════════════════════════════
     //  3. USD -> TOKEN INVERSION
-    // ════════════════════════════════════════════════════════════════════
 
     // --- calcGmFromUsdE18 ---
 
@@ -282,9 +276,7 @@ contract BasaltMathUnit is ForkSetupFull {
         assertEq(result, basaltMath.calcWbtcFromUsdE18(47_500e18, 95_000e18), "should match calcWbtcFromUsdE18");
     }
 
-    // ════════════════════════════════════════════════════════════════════
     //  4. LTV RISK MEASUREMENT
-    // ════════════════════════════════════════════════════════════════════
 
     // --- calcLtvBps ---
 
@@ -417,9 +409,7 @@ contract BasaltMathUnit is ForkSetupFull {
         assertGt(basaltMath.calcLtvDeviationUpBps(6_000, 5_000), 0, "above target should show positive deviation UP");
     }
 
-    // ════════════════════════════════════════════════════════════════════
     //  5. BORROW / LEVERAGE SIZING
-    // ════════════════════════════════════════════════════════════════════
 
     // --- calcTargetDebtUsdE18 ---
 
@@ -513,9 +503,7 @@ contract BasaltMathUnit is ForkSetupFull {
         assertEq(basaltMath.calcRatioPreservingBorrow(100e18, 0.5e8, 100e18), 2 * result, "linearity: 2x deposit = 2x borrow");
     }
 
-    // ════════════════════════════════════════════════════════════════════
     //  6. SLIPPAGE & WRAP/UNWRAP
-    // ════════════════════════════════════════════════════════════════════
 
     // --- applySlippage ---
 
@@ -593,9 +581,7 @@ contract BasaltMathUnit is ForkSetupFull {
         assertLe(fullShare - 2 * result, 1, "100% share should be ~2x of 50% share (rounding)");
     }
 
-    // ════════════════════════════════════════════════════════════════════
     //  7. POST-ACTION POSITION PROJECTION
-    // ════════════════════════════════════════════════════════════════════
 
     // --- calcPostDepositLtvBps ---
 
@@ -653,9 +639,7 @@ contract BasaltMathUnit is ForkSetupFull {
         assertEq(postDebt, 0, "debt should floor at 0 when minWbtcOut > current");
     }
 
-    // ════════════════════════════════════════════════════════════════════
     //  8. WITHDRAW FLOW
-    // ════════════════════════════════════════════════════════════════════
 
     // --- calcWithdrawRawRatioInitialE18 ---
 
@@ -809,9 +793,7 @@ contract BasaltMathUnit is ForkSetupFull {
         assertEq(basaltMath.calcWbtcToUserFromDebtRepay(MAX128, MAX128), 0, "equal max values should also give 0");
     }
 
-    // ════════════════════════════════════════════════════════════════════
     //  9. DOLOMITE BORROW-INDEX SCALING
-    // ════════════════════════════════════════════════════════════════════
 
     // --- calcScaledByIndexE18 ---
 
@@ -857,9 +839,7 @@ contract BasaltMathUnit is ForkSetupFull {
         assertLt(result, 1.1e8, "stripping interest should reduce debt");
     }
 
-    // ════════════════════════════════════════════════════════════════════
     //  10. FEE MATH
-    // ════════════════════════════════════════════════════════════════════
 
     // --- calcProfitUsdE18 ---
 
@@ -971,9 +951,7 @@ contract BasaltMathUnit is ForkSetupFull {
         assertEq(result, basaltMath.calcNextAccruedManagerFeeAfterWithdraw(10e18, 10e18), "overpayout should equal exact payout");
     }
 
-    // ════════════════════════════════════════════════════════════════════
     //  11. DEPOSIT ACCOUNTING HELPERS
-    // ════════════════════════════════════════════════════════════════════
 
     // --- calcPendingTotalGmE18 ---
 
@@ -1001,9 +979,7 @@ contract BasaltMathUnit is ForkSetupFull {
         assertLt(result, 1 ether, "refund must be less than msg.value when some was spent");
     }
 
-    // ════════════════════════════════════════════════════════════════════
     //  12. TIME / BLOCK GATES
-    // ════════════════════════════════════════════════════════════════════
 
     // --- calcKeeperDeadlineTimestamp ---
 
@@ -1054,9 +1030,7 @@ contract BasaltMathUnit is ForkSetupFull {
         assertEq(basaltMath.calcRemainingCooldownBlocks(100, 99), 1, "one block before expiry should have 1 remaining");
     }
 
-    // ════════════════════════════════════════════════════════════════════
     //  13. GENERIC ARITHMETIC IDIOMS
-    // ════════════════════════════════════════════════════════════════════
 
     // --- calcAbsDiff ---
 
@@ -1196,10 +1170,8 @@ contract BasaltMathUnit is ForkSetupFull {
         assertEq(result, basaltMath.mulDiv(MAX128, MAX128, MAX128), "exact max128 division: ceil should equal floor");
     }
 
-    // ════════════════════════════════════════════════════════════════════
     //  CROSS-CUTTING: MAX UINT128 BOUNDARY TESTS
     //  Ensure no function reverts unexpectedly with max uint128 inputs.
-    // ════════════════════════════════════════════════════════════════════
 
     function test_calcNavUsdE18_maxUint128() public view {
         // All max128 inputs -- mulDiv handles intermediate overflow
@@ -1261,9 +1233,7 @@ contract BasaltMathUnit is ForkSetupFull {
         assertLt(result, MAX128, "scaling down by index ratio should reduce debt");
     }
 
-    // ════════════════════════════════════════════════════════════════════
     //  FUZZ TESTS — property-based tests for all BasaltMath categories
-    // ════════════════════════════════════════════════════════════════════
 
     // 1. NAV calculation — NAV >= 0, debt reduces NAV
     function testFuzz_calcNavUsdE18_neverOverflows(

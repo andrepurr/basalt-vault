@@ -8,9 +8,7 @@ import {VaultState} from "../../src/core/VaultState.sol";
 import {IVaultCoreNftFactory} from "../../src/interfaces/IVaultCoreNftFactory.sol";
 import {NotHandler, NotManagerOrNftOwner} from "../../src/core/vaultCoreLibraries/VaultCoreTypes.sol";
 
-// ════════════════════════════════════════════════════════════════════════════
 //  MALICIOUS TARGET CONTRACTS
-// ════════════════════════════════════════════════════════════════════════════
 
 /// @notice Writes to storage slot 0 (FACTORY in VaultCore layout).
 ///         If delegatecall succeeds, FACTORY address would be corrupted.
@@ -97,9 +95,7 @@ contract BenignTarget {
     receive() external payable {}
 }
 
-// ════════════════════════════════════════════════════════════════════════════
 //  MINIMAL MOCK FACTORY
-// ════════════════════════════════════════════════════════════════════════════
 
 contract DelegateCallMockFactory is IVaultCoreNftFactory {
     address public immutable factoryOwner;
@@ -128,9 +124,7 @@ contract DelegateCallMockFactory is IVaultCoreNftFactory {
     }
 }
 
-// ════════════════════════════════════════════════════════════════════════════
 //  TEST SUITE
-// ════════════════════════════════════════════════════════════════════════════
 
 /// @title DelegatecallAbuse
 /// @notice Security tests for the delegatecall path in VaultCore.universalCall.
@@ -181,7 +175,7 @@ contract DelegatecallAbuse is Test {
         handlerExt3 = address(new BenignTarget());
 
         // Initialize VaultCore clone
-        VaultCore(coreClone).initialize(
+        VaultCore(payable(coreClone)).initialize(
             address(factory),
             address(0xBA5A), // basaltMath (unused in these tests)
             handlerDeposit,
@@ -209,9 +203,7 @@ contract DelegatecallAbuse is Test {
         vm.deal(STRANGER, 1 ether);
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  1. Stranger cannot call universalCall with delegatecall
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_delegatecall_stranger_reverts() public {
         BenignTarget target = new BenignTarget();
@@ -227,13 +219,11 @@ contract DelegatecallAbuse is Test {
         );
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  2. Delegatecall storage corruption -- handler-authorized but target
     //     writes to slot 0 (FACTORY). Verifies FACTORY is NOT corrupted.
     //     NOTE: VaultCore has NO protection against this -- if a handler is
     //     compromised, delegatecall CAN corrupt storage. This test documents
     //     the risk surface.
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_delegatecall_storageCorruption_reverts() public {
         StorageCorruptor corruptor = new StorageCorruptor();
@@ -267,9 +257,7 @@ contract DelegatecallAbuse is Test {
         );
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  3. Delegatecall reentrancy -- target re-enters universalCall
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_delegatecall_reentrancy_reverts() public {
         ReentrancyAttacker attacker = new ReentrancyAttacker();
@@ -291,13 +279,11 @@ contract DelegatecallAbuse is Test {
         );
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  4. Delegatecall selfdestruct -- post-Cancun behavior
     //     selfdestruct in delegatecall context operates on VaultCore.
     //     Post-Cancun (EIP-6780): selfdestruct only sends ETH, does not
     //     destroy the contract unless called in the same tx as creation.
     //     VaultCore should survive with code intact.
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_delegatecall_selfDestruct_reverts() public {
         SelfDestructAttacker attacker = new SelfDestructAttacker();
@@ -329,9 +315,7 @@ contract DelegatecallAbuse is Test {
         );
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  5. Delegatecall value theft -- target sends VaultCore ETH to attacker
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_delegatecall_valueTheft_reverts() public {
         // Deploy receiver contract (known to Anvil via `new`, no RPC lookup needed)
@@ -363,11 +347,9 @@ contract DelegatecallAbuse is Test {
         assertEq(address(vaultCore).balance, 0, "VaultCore must be drained -- documents the attack vector");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  6. Only registered handlers can invoke delegatecall path
     //     Tests every non-handler role: stranger, nftOwner, protocolManager,
     //     factory, factoryOwner.
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_delegatecall_onlyToRegisteredHandlers() public {
         BenignTarget target = new BenignTarget();
@@ -405,11 +387,9 @@ contract DelegatecallAbuse is Test {
         assertEq(decoded, keccak256("pong"), "Handler delegatecall to benign target must succeed");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  7. Delegatecall cannot modify VaultCore handler slots
     //     Even an authorized delegatecall to a malicious target that writes
     //     to handler storage slots succeeds -- proving the vulnerability.
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_delegatecall_cannotChangeImplementation() public {
         HandlerSlotOverwriter overwriter = new HandlerSlotOverwriter();
@@ -456,11 +436,9 @@ contract DelegatecallAbuse is Test {
         }
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  8. Initiator validation still applies on delegatecall path
     //     Even if msg.sender is a valid handler, initiator must be
     //     nftOwner or protocolManager.
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_delegatecall_invalidInitiator_reverts() public {
         BenignTarget target = new BenignTarget();
@@ -477,11 +455,9 @@ contract DelegatecallAbuse is Test {
         );
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  9. Regular call path (useDelegateCall=false) does NOT corrupt storage
     //     Baseline comparison: same StorageCorruptor via regular call has
     //     no effect on VaultCore storage.
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_regularCall_storageNotCorrupted() public {
         StorageCorruptor corruptor = new StorageCorruptor();

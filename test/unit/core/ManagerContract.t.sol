@@ -45,9 +45,7 @@ contract ManagerContractUnit is ForkSetupFull {
         vm.stopPrank();
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ROLE ISOLATION: onlyOwner -- setConfigurator
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_setConfigurator_asStranger_reverts() public {
         address confBefore = managerContract.configurator();
@@ -76,9 +74,7 @@ contract ManagerContractUnit is ForkSetupFull {
         assertTrue(confBefore != address(0), "pre-existing configurator should be non-zero");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ROLE ISOLATION: onlyOwner -- setOperational
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_setOperational_asStranger_reverts() public {
         address opBefore = managerContract.operational();
@@ -107,9 +103,7 @@ contract ManagerContractUnit is ForkSetupFull {
         assertTrue(opBefore != address(0), "pre-existing operational should be non-zero");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ROLE ISOLATION: onlyOwner -- setHandlerProposer
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_setHandlerProposer_asStranger_reverts() public {
         address hpBefore = managerContract.handlerProposer();
@@ -129,9 +123,7 @@ contract ManagerContractUnit is ForkSetupFull {
         assertEq(managerContract.handlerProposer(), newHp, "handlerProposer should be updated");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ROLE ISOLATION: onlyOwner -- setAddressProposer
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_setAddressProposer_asStranger_reverts() public {
         address apBefore = managerContract.addressProposer();
@@ -151,9 +143,7 @@ contract ManagerContractUnit is ForkSetupFull {
         assertEq(managerContract.addressProposer(), newAp, "addressProposer should be updated");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ROLE ISOLATION: onlyOwner -- setInitialCoreAddressBook
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_setInitialCoreAddressBook_asStranger_reverts() public {
         address ownerBefore = managerContract.owner();
@@ -166,9 +156,7 @@ contract ManagerContractUnit is ForkSetupFull {
         assertTrue(stranger != ownerBefore, "stranger must not be owner for this test to be valid");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ROLE ISOLATION: onlyOwner -- addFeeSplitterTrackedToken
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_addFeeSplitterTrackedToken_asStranger_reverts() public {
         bool trackedBefore = feeSplitter.isTrackedToken(IERC20(USDT));
@@ -187,9 +175,7 @@ contract ManagerContractUnit is ForkSetupFull {
         assertTrue(feeSplitter.isTrackedToken(IERC20(USDT)), "USDT should be tracked after add");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ROLE ISOLATION: onlyConfigurator -- setVaultTargetLtv
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_setVaultTargetLtv_asStranger_reverts() public {
         uint256 ltvBefore = vaultState.targetLtvBps();
@@ -216,9 +202,7 @@ contract ManagerContractUnit is ForkSetupFull {
         assertEq(vaultState.targetLtvBps(), 4900, "targetLtvBps should be 4900 after configurator set");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ROLE ISOLATION: onlyConfigurator -- setVaultKeeperDeadline
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_setVaultKeeperDeadline_asStranger_reverts() public {
         uint256 deadlineBefore = vaultState.keeperDeadline();
@@ -245,9 +229,7 @@ contract ManagerContractUnit is ForkSetupFull {
         assertEq(vaultState.keeperDeadline(), 120, "keeperDeadline should be 120 after configurator set");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ROLE ISOLATION: onlyConfigurator -- setVaultRebalanceSlippageCapBps
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_setVaultRebalanceSlippageCapBps_asStranger_reverts() public {
         uint256 slippageBefore = vaultState.rebalanceSlippageCapBps();
@@ -274,9 +256,7 @@ contract ManagerContractUnit is ForkSetupFull {
         assertEq(vaultState.rebalanceSlippageCapBps(), 300, "rebalanceSlippageCapBps should be 300");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ROLE ISOLATION: onlyConfigurator -- setVaultUnwrapLongShareBps
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_setVaultUnwrapLongShareBps_asStranger_reverts() public {
         uint256 shareBefore = vaultState.unwrapLongShareBps();
@@ -303,9 +283,7 @@ contract ManagerContractUnit is ForkSetupFull {
         assertEq(vaultState.unwrapLongShareBps(), 4500, "unwrapLongShareBps should be 4500");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ROLE ISOLATION: onlyConfigurator -- setVaultRebalanceThresholdUpBps
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_setVaultRebalanceThresholdUpBps_asStranger_reverts() public {
         uint256 threshBefore = vaultState.rebalanceThresholdUpBps();
@@ -332,9 +310,7 @@ contract ManagerContractUnit is ForkSetupFull {
         assertEq(vaultState.rebalanceThresholdUpBps(), 1000, "rebalanceThresholdUpBps should be 1000");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ROLE ISOLATION: onlyConfigurator -- setVaultRebalanceThresholdDownBps
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_setVaultRebalanceThresholdDownBps_asStranger_reverts() public {
         uint256 threshBefore = vaultState.rebalanceThresholdDownBps();
@@ -361,9 +337,7 @@ contract ManagerContractUnit is ForkSetupFull {
         assertEq(vaultState.rebalanceThresholdDownBps(), 1500, "rebalanceThresholdDownBps should be 1500");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // CONFIG BOUNDARY VALUES: targetLtvBps
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_setVaultTargetLtv_belowMin_reverts() public {
         uint256 ltvBefore = vaultState.targetLtvBps();
@@ -413,9 +387,7 @@ contract ManagerContractUnit is ForkSetupFull {
         assertLe(vaultState.targetLtvBps(), 5200, "targetLtvBps should be <= MAX_TARGET_LTV_BPS");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // CONFIG BOUNDARY VALUES: keeperDeadline
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_setVaultKeeperDeadline_belowMin_reverts() public {
         uint256 deadlineBefore = vaultState.keeperDeadline();
@@ -465,9 +437,7 @@ contract ManagerContractUnit is ForkSetupFull {
         assertLe(vaultState.keeperDeadline(), 3600, "keeperDeadline should be <= MAX_KEEPER_DEADLINE");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ROLE ISOLATION: onlyOperational
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_rebalanceVault_asStranger_reverts() public {
         assertTrue(stranger != managerContract.operational(), "stranger must not be operational");
@@ -575,9 +545,7 @@ contract ManagerContractUnit is ForkSetupFull {
         );
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ROLE ISOLATION: onlyHandlerProposer
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_proposeHandler_asStranger_reverts() public {
         assertTrue(stranger != managerContract.handlerProposer(), "stranger must not be handlerProposer");
@@ -613,7 +581,7 @@ contract ManagerContractUnit is ForkSetupFull {
             newHandler
         );
         // Proposal should be active on vaultCore
-        (address pendingOld, address pendingNew, bool exists) = VaultCore(mcVc).handlerProposal();
+        (address pendingOld, address pendingNew, bool exists) = VaultCore(payable(mcVc)).handlerProposal();
         assertTrue(exists, "handler proposal should exist");
         assertEq(pendingOld, address(depositHandler), "pending old handler should be depositHandler");
         assertEq(pendingNew, newHandler, "pending new handler should be newHandler");
@@ -627,9 +595,7 @@ contract ManagerContractUnit is ForkSetupFull {
         managerContract.cancelHandlerProposal(IVaultCoreGovernance(address(vaultCore)));
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // ROLE ISOLATION: onlyAddressProposer
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_proposeBasaltAddresses_asStranger_reverts() public {
         assertTrue(stranger != managerContract.addressProposer(), "stranger must not be addressProposer");
@@ -661,7 +627,7 @@ contract ManagerContractUnit is ForkSetupFull {
             newState
         );
         // Verify proposal is stored on vaultCore
-        (address pendingMath, address pendingState, bool exists) = VaultCore(mcVc).basaltAddressesProposal();
+        (address pendingMath, address pendingState, bool exists) = VaultCore(payable(mcVc)).basaltAddressesProposal();
         assertTrue(exists, "basalt addresses proposal should exist");
         assertEq(pendingMath, newMath, "pending math should be newMath");
         assertEq(pendingState, newState, "pending state should be newState");
@@ -675,9 +641,7 @@ contract ManagerContractUnit is ForkSetupFull {
         managerContract.cancelBasaltAddressesProposal(IVaultCoreGovernance(address(vaultCore)));
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // FEE COLLECTOR GOVERNANCE
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_proposeFeeCollector_asStranger_reverts() public {
         address pendingBefore = managerContract.pendingFeeCollector();
@@ -733,9 +697,7 @@ contract ManagerContractUnit is ForkSetupFull {
         assertEq(managerContract.pendingFeeCollector(), address(0), "pendingFeeCollector should be cleared");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // PROTOCOL MANAGER GOVERNANCE
-    // ══════════════════════════════════════════════════════════════════════
 
     /// @dev Helper: factoryOwner holds all fee shares. Give voting weight and advance 1 block for snapshot.
     function _setupGovernanceVoter() internal returns (address voter) {
@@ -815,7 +777,7 @@ contract ManagerContractUnit is ForkSetupFull {
         vm.prank(voter);
         managerContract.signProtocolManagerChange(proposalId);
 
-        (,,,uint256 yesWeight,,,) = managerContract.protocolManagerProposals(proposalId);
+        (,,,uint256 yesWeight,,,,) = managerContract.protocolManagerProposals(proposalId);
         assertGt(yesWeight, 0, "yesWeight should be non-zero after signing");
     }
 
@@ -825,11 +787,11 @@ contract ManagerContractUnit is ForkSetupFull {
         vm.prank(voter);
         uint256 proposalId = managerContract.proposeProtocolManagerChange(vaultCoreNftFactory, address(uint160(0xDDD1)));
 
-        (,,,uint256 yesWeightBefore,,,) = managerContract.protocolManagerProposals(proposalId);
+        (,,,uint256 yesWeightBefore,,,,) = managerContract.protocolManagerProposals(proposalId);
         vm.prank(stranger);
         vm.expectRevert(abi.encodeWithSelector(NoVotingWeight.selector));
         managerContract.signProtocolManagerChange(proposalId);
-        (,,,uint256 yesWeightAfter,,,) = managerContract.protocolManagerProposals(proposalId);
+        (,,,uint256 yesWeightAfter,,,,) = managerContract.protocolManagerProposals(proposalId);
         assertEq(yesWeightAfter, yesWeightBefore, "yesWeight must not change on revert");
     }
 
@@ -842,11 +804,11 @@ contract ManagerContractUnit is ForkSetupFull {
         vm.prank(voter);
         managerContract.signProtocolManagerChange(proposalId);
 
-        (,,,uint256 yesWeightAfterFirst,,,) = managerContract.protocolManagerProposals(proposalId);
+        (,,,uint256 yesWeightAfterFirst,,,,) = managerContract.protocolManagerProposals(proposalId);
         vm.prank(voter);
         vm.expectRevert(abi.encodeWithSelector(AlreadySigned.selector));
         managerContract.signProtocolManagerChange(proposalId);
-        (,,,uint256 yesWeightAfterSecond,,,) = managerContract.protocolManagerProposals(proposalId);
+        (,,,uint256 yesWeightAfterSecond,,,,) = managerContract.protocolManagerProposals(proposalId);
         assertEq(yesWeightAfterSecond, yesWeightAfterFirst, "yesWeight must not change on double-sign revert");
     }
 
@@ -863,7 +825,7 @@ contract ManagerContractUnit is ForkSetupFull {
         vm.expectRevert(abi.encodeWithSelector(InsufficientFeeParticipantSupport.selector));
         managerContract.executeProtocolManagerChange(proposalId);
         assertEq(vaultCoreNftFactory.protocolManager(), pmBefore, "protocolManager must not change on revert");
-        (,,,,, bool executed,) = managerContract.protocolManagerProposals(proposalId);
+        (,,,,,, bool executed,) = managerContract.protocolManagerProposals(proposalId);
         assertFalse(executed, "proposal must not be marked executed on revert");
     }
 
@@ -889,7 +851,7 @@ contract ManagerContractUnit is ForkSetupFull {
         );
 
         // Verify proposal state
-        (,,,,, bool executed,) = managerContract.protocolManagerProposals(proposalId);
+        (,,,,,, bool executed,) = managerContract.protocolManagerProposals(proposalId);
         assertTrue(executed, "proposal should be marked executed");
 
         // Active proposal cleared
@@ -911,7 +873,7 @@ contract ManagerContractUnit is ForkSetupFull {
         managerContract.cancelProtocolManagerChange(proposalId);
 
         // Verify proposal cancelled
-        (,,,,,, bool cancelled) = managerContract.protocolManagerProposals(proposalId);
+        (,,,,,,, bool cancelled) = managerContract.protocolManagerProposals(proposalId);
         assertTrue(cancelled, "proposal should be marked cancelled");
 
         // Active proposal cleared
@@ -928,14 +890,12 @@ contract ManagerContractUnit is ForkSetupFull {
         vm.prank(voter);
         vm.expectRevert(abi.encodeWithSelector(InsufficientCancelSupport.selector));
         managerContract.cancelProtocolManagerChange(proposalId);
-        (,,,,,, bool cancelled) = managerContract.protocolManagerProposals(proposalId);
+        (,,,,,,, bool cancelled) = managerContract.protocolManagerProposals(proposalId);
         assertFalse(cancelled, "proposal must not be marked cancelled on revert");
         assertEq(managerContract.activeProtocolManagerProposalId(), proposalId, "activeProposalId must remain set");
     }
 
-    // ══════════════════════════════════════════════════════════════════════
     // FEE OPERATIONS: collectFees (holder OR operational)
-    // ══════════════════════════════════════════════════════════════════════
 
     function test_collectFees_sweepsToFeeSplitter() public {
         uint256 amount = 1000e6;

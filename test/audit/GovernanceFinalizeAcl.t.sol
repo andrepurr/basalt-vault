@@ -95,7 +95,7 @@ contract GovernanceFinalizeAclTest is Test {
         );
         managerContract.executeProtocolManagerChange(proposalId);
         // Proposal remains unexecuted after revert
-        (,,,,, bool executed,) = managerContract.protocolManagerProposals(proposalId);
+        (,,,,,, bool executed,) = managerContract.protocolManagerProposals(proposalId);
         assertEq(executed, false, "proposal not executed after stranger revert");
     }
 
@@ -107,7 +107,7 @@ contract GovernanceFinalizeAclTest is Test {
         managerContract.executeProtocolManagerChange(proposalId);
         // Confirm the side-effects.
         assertEq(factory.protocolManager(), expected, "protocolManager rotated");
-        (,,,,, bool executed,) = managerContract.protocolManagerProposals(proposalId);
+        (,,,,,, bool executed,) = managerContract.protocolManagerProposals(proposalId);
         assertEq(executed, true, "proposal marked as executed");
     }
 
@@ -118,7 +118,7 @@ contract GovernanceFinalizeAclTest is Test {
         vm.prank(otherHolder);
         managerContract.executeProtocolManagerChange(proposalId);
         assertEq(factory.protocolManager(), expected, "protocolManager rotated by otherHolder");
-        (,,,,, bool executed,) = managerContract.protocolManagerProposals(proposalId);
+        (,,,,,, bool executed,) = managerContract.protocolManagerProposals(proposalId);
         assertEq(executed, true, "proposal marked as executed");
     }
 
@@ -128,7 +128,7 @@ contract GovernanceFinalizeAclTest is Test {
         vm.prank(operational);
         managerContract.executeProtocolManagerChange(proposalId);
         assertEq(factory.protocolManager(), expected, "protocolManager rotated by operational");
-        (,,,,, bool executed,) = managerContract.protocolManagerProposals(proposalId);
+        (,,,,,, bool executed,) = managerContract.protocolManagerProposals(proposalId);
         assertEq(executed, true, "proposal marked as executed");
     }
 
@@ -144,7 +144,7 @@ contract GovernanceFinalizeAclTest is Test {
         );
         managerContract.cancelProtocolManagerChange(proposalId);
         // Proposal remains not cancelled after revert
-        (,,,,,, bool cancelled) = managerContract.protocolManagerProposals(proposalId);
+        (,,,,,,, bool cancelled) = managerContract.protocolManagerProposals(proposalId);
         assertEq(cancelled, false, "proposal not cancelled after stranger revert");
     }
 
@@ -152,7 +152,7 @@ contract GovernanceFinalizeAclTest is Test {
         uint256 proposalId = _proposeAndPassCancelQuorum();
         vm.prank(holder);
         managerContract.cancelProtocolManagerChange(proposalId);
-        (,,,, , , bool cancelled) = managerContract.protocolManagerProposals(proposalId);
+        (,,,,, , , bool cancelled) = managerContract.protocolManagerProposals(proposalId);
         assertTrue(cancelled, "proposal should be cancelled");
     }
 
@@ -160,7 +160,7 @@ contract GovernanceFinalizeAclTest is Test {
         uint256 proposalId = _proposeAndPassCancelQuorum();
         vm.prank(operational);
         managerContract.cancelProtocolManagerChange(proposalId);
-        (,,,, , , bool cancelled) = managerContract.protocolManagerProposals(proposalId);
+        (,,,,, , , bool cancelled) = managerContract.protocolManagerProposals(proposalId);
         assertTrue(cancelled, "proposal should be cancelled");
     }
 
@@ -193,7 +193,7 @@ contract GovernanceFinalizeAclTest is Test {
 
     /// @dev Read `proposal.nextProtocolManager` from the public mapping for assertions.
     function _readProposalNextManager(uint256 proposalId) internal view returns (address) {
-        (, address nextProtocolManager,,,,,) = managerContract.protocolManagerProposals(proposalId);
+        (, address nextProtocolManager,,,,,,) = managerContract.protocolManagerProposals(proposalId);
         return nextProtocolManager;
     }
 }

@@ -248,7 +248,7 @@ contract InvariantACL is Test {
         address extensionHandler3 = address(new Attacker());
 
         // Initialize VaultCore clone
-        VaultCore(coreClone).initialize(
+        VaultCore(payable(coreClone)).initialize(
             address(factory),
             address(0xBA5A), // basaltMath (unused in ACL tests)
             depositHandler,
@@ -273,7 +273,7 @@ contract InvariantACL is Test {
 
         // Create actor
         actor = new ACLActor(
-            VaultCore(coreClone),
+            VaultCore(payable(coreClone)),
             VaultState(stateClone),
             NFT_OWNER,
             PROTOCOL_MANAGER,

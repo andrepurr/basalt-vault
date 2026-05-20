@@ -72,9 +72,7 @@ contract GMCalculatorUnit is ForkSetupFull {
         return OracleGuard.readChainlinkPrice(oracle, maxAge, maxPrice);
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  GM PRICE
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_calcGmPriceUsdE18_returnsPositive() public view {
         GMCalculator.GmPriceParams memory p = _buildLiveParams();
@@ -91,9 +89,7 @@ contract GMCalculatorUnit is ForkSetupFull {
         assertLe(price, type(uint256).max / 2, "GM price should be bounded");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  POOL VALUE
-    // ════════════════════════════════════════════════════════════════════════
 
     function test_calcPoolValue_returnsPositive() public view {
         GMCalculator.GmPriceParams memory p = _buildLiveParams();
