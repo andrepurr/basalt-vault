@@ -134,7 +134,6 @@ Basalt depends on two external protocols -- Dolomite Margin and GMX v2. Their up
 - The protocol monitors Dolomite governance announcements
 - Re-verification commands are maintained to check implementation addresses after any upgrade
 - The async recovery handler (`AsyncRecoveryHandler`) can cancel stuck Dolomite operations after the keeper deadline + 10 minutes, providing a safety valve if an upgrade breaks async settlement
-- Emergency mode provides a last-resort unwind path independent of normal Dolomite async flows
 
 ---
 
@@ -181,30 +180,7 @@ The deadman flag is irreversible -- once triggered, it cannot be un-triggered. T
 
 ---
 
-## 9. Emergency Mode
-
-Emergency mode is an irreversible last-resort mechanism for unwinding a vault's position when normal operations are not possible.
-
-**Properties:**
-- **Irreversible** -- once activated, the vault cannot return to normal operation
-- **Permissionless execution** -- anyone can execute emergency operations; no single point of failure
-- **Decaying slippage tolerance** -- starts at 5%, decays by 1% per day, with a 1% floor. This prevents immediate MEV extraction while gradually relaxing constraints to ensure eventual execution
-- **Chunked unwind** -- large positions (>1% of GM supply) are unwound in chunks (1/10th per step) to minimize market impact
-
-**Slippage curve:**
-```
-Day 0:   5.0% max slippage
-Day 1:   4.0%
-Day 2:   3.0%
-Day 3:   2.0%
-Day 4+:  1.0% (floor)
-```
-
-**Emergency swap path:** WBTC to USDC uses Uniswap V3 with a 30-minute TWAP oracle (flash-loan resistant) and a 1% slippage cap against the TWAP price.
-
----
-
-## 10. Oracle Security
+## 9. Oracle Security
 
 The protocol uses a layered oracle architecture:
 
@@ -304,9 +280,6 @@ The following invariants are verified through stateful fuzz testing (256 runs, d
 | Sequencer grace period | 1 hour | Fixed |
 | Oracle price spread guard | 0.25% (Chainlink vs Dolomite) | Fixed |
 | Deadman period | ~2,628,000 blocks (~1 year) | Fixed |
-| Emergency initial slippage | 5% | Fixed |
-| Emergency slippage floor | 1% | Fixed |
-| Emergency slippage decay | 1% per day | Fixed |
 | Address book cooldown | 24 hours | Fixed |
 | Protocol manager vote threshold | 80% of total supply (normal) | Fixed |
 | Protocol manager timeout vote | Simple majority, 10% quorum (after 180 days) | Fixed |
@@ -323,4 +296,3 @@ The following invariants are verified through stateful fuzz testing (256 runs, d
 
 4. **Arbitrum L2 assumptions** -- The protocol assumes Arbitrum block times of ~0.25s for the deadman switch calculation. Changes to Arbitrum's block production rate would affect the deadman period.
 
-5. **No global pause** -- By design, there is no admin pause function. This is a deliberate trade-off: immutability and censorship resistance over the ability to halt operations in an emergency. Emergency mode provides the alternative.
