@@ -35,8 +35,14 @@ jobs:
       - name: Install Halmos
         run: pip install halmos
 
-      - name: Formal verification
-        run: halmos
+      - name: ShareInvariant (pure math)
+        run: halmos --match-contract ShareInvariantTest
+
+      - name: AccessControl
+        run: halmos --match-contract AccessControlTest
+
+      - name: HandlerGovernance
+        run: halmos --match-contract HandlerGovernanceTest
 
   test:
     runs-on: ubuntu-latest
