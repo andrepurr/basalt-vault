@@ -18,6 +18,26 @@ jobs:
       - name: Build
         run: forge build --skip test script
 
+  halmos:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: foundry-rs/foundry-toolchain@v1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Halmos
+        run: pip install halmos
+
+      - name: Formal verification
+        run: halmos
+
   test:
     runs-on: ubuntu-latest
     needs: build
