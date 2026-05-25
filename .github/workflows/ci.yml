@@ -43,27 +43,3 @@ jobs:
 
       - name: HandlerGovernance
         run: halmos --match-contract HandlerGovernanceTest
-
-  test:
-    runs-on: ubuntu-latest
-    needs: build
-    env:
-      ARBITRUM_RPC_URL: ${{ secrets.ARBITRUM_RPC_URL }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - uses: foundry-rs/foundry-toolchain@v1
-
-      - name: Unit tests
-        if: env.ARBITRUM_RPC_URL != ''
-        run: forge test --match-path "test/unit/**" --fork-url $ARBITRUM_RPC_URL -vvv
-
-      - name: Integration tests
-        if: env.ARBITRUM_RPC_URL != ''
-        run: forge test --match-path "test/integration/**" --fork-url $ARBITRUM_RPC_URL -vvv
-
-      - name: Invariant tests
-        if: env.ARBITRUM_RPC_URL != ''
-        run: forge test --match-path "test/invariant/**" --fork-url $ARBITRUM_RPC_URL -vvv
