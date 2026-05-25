@@ -62,3 +62,6 @@ FIX-STATUSES.md
 # === Build caches ===
 __pycache__/
 *.pyc
+TODO.md
+AUDIT_SCOPE.md
+handoff.md
