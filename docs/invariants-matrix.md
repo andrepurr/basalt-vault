@@ -1,16 +1,47 @@
-# Invariants Matrix
+# Invariants for Audit Verification
 
-| ID | Invariant | Primary Tests | Notes |
-| --- | --- | --- | --- |
-| INV-FS-001 | FeeSplitter rewards are conserved across releases and transfers. | `testFuzz_notifyReward_conservationAcrossReleases` (FeeSplitter.t.sol), `test_feeSplitter_notifyThenRelease_fullConservation` (ManagerFeeFeeSplitterHard.t.sol), `invariant_invFs001_rewardsConserved` (InvariantSolvency.t.sol) | Paid balances plus splitter residue equal all inflows. |
-| INV-FS-002 | FeeSplitter share transfers cannot steal previously attributed rewards. | `testFuzz_shareTransfer_doesNotStealRewards` (FeeSplitter.t.sol), `test_feeSplitter_transfer_doesNotStealPastRewards` (ManagerFeeFeeSplitterHard.t.sol), `test_transfer_updatesReleasable` (FeeSplitter.t.sol) | Covers post-notify and pre-release transfer ordering. |
-| INV-FS-003 | New rewards after a transfer accrue to current holders only. | `test_feeSplitter_proRata_threeHolders` (ManagerFeeFeeSplitterHard.t.sol), `testFuzz_notifyReward_multipleNotificationsAccumulate` (FeeSplitter.t.sol) | Multi-tranche attribution. |
-| INV-VC-001 | Only configured handlers can execute `VaultCore.universalCall`. | `invariant_invVc001_onlyConfiguredHandlers` (InvariantACL.t.sol), `test_delegatecall_onlyToRegisteredHandlers` (DelegatecallAbuse.t.sol) | Handler-slot authorization. |
-| INV-VC-002 | `universalCall` initiator must be vault NFT owner or protocol manager. | `invariant_invVc002_initiatorMustBeOwnerOrManager` (InvariantACL.t.sol), `test_universalCall_asStranger_reverts` (VaultCore.t.sol) | Prevents handler-driven stranger calls. |
-| INV-VC-003 | Handler rotation cannot duplicate handler slots. | `test_proposeHandler_duplicateHandler_reverts` (VaultCore.t.sol), `invariant_invVc003_handlerSlotsUnique` (InvariantStateMachine.t.sol) | Avoids orphaned handler slots. |
-| INV-VS-001 | Only the paired `VaultCore` can mutate `VaultState`. | `invariant_invVs001_onlyPairedVaultCoreMutatesState` (InvariantACL.t.sol), `test_vaultState_rejectsWrongVaultCore` (CrossVaultContamination.t.sol), `test_setDepositState_directCall_reverts` (VaultState.t.sol) | State machine mutation gate. |
-| INV-FAC-001 | Factory address-book cooldown blocks vault creation after update. | `invariant_invFac001_cooldownBlocksCreation` (InvariantFeeAccounting.t.sol) | Guards clone template swaps. |
-| INV-FAC-002 | Multiple vault clones remain isolated under one factory. | `invariant_invFac002_cloneIsolation` (InvariantFeeAccounting.t.sol), `test_deposit_vaultA_doesNotAffectVaultB_shares` (CrossVaultContamination.t.sol), `test_deposit_vaultA_doesNotAffectVaultB_state` (CrossVaultContamination.t.sol) | Stateful clone and state isolation. |
-| INV-MGR-001 | Manager protocol-manager rotation requires sufficient voting support and no double-counting. | `invariant_invMgr001_rotationRequiresThreshold` (InvariantStateMachine.t.sol), `test_executeProtocolManagerChange_beforeThreshold_reverts` (ManagerContract.t.sol), `test_signProtocolManagerChange_doubleSigning_reverts` (ManagerContract.t.sol), `test_regression_yesThenCancel_reverts` (VotingDualSign.t.sol), `test_regression_totalParticipationCappedAtSupply` (VotingDualSign.t.sol) | Governance threshold and replay prevention. |
-| INV-ORACLE-001 | Chainlink prices must be fresh, positive, and below hard caps. | `invariant_invOracle001_chainlinkFreshAndPositive` (InvariantSolvency.t.sol), `test_oracle_stalePrice_reverts` (OracleManipulation.t.sol), `test_oracle_zeroPrice_reverts` (OracleManipulation.t.sol), `test_oracle_priceAboveCeiling_reverts` (OracleManipulation.t.sol), `test_readChainlinkPrice_wbtcFeed_returnsPositive` (OracleGuard.t.sol) | Mocked stale/bound/sequencer paths plus unit assertions. |
-| INV-ORACLE-002 | GMX DataStore pool keys for the configured GM market are non-zero. | `invariant_invOracle002_gmxPoolKeysNonZero` (InvariantSolvency.t.sol), `test_calcPoolValue_returnsPositive` (GMCalculator.t.sol) | Detects key/schema drift on pinned fork. |
+Critical invariants the auditor should verify. These map directly to the 4 properties in the [Audit Brief](https://x0x1.xyz/share/5e282a1a526ad37e).
+
+## Access Control
+
+| ID | Invariant |
+|----|-----------|
+| ACL-1 | Only registered handler slots can call `VaultCore.universalCall` |
+| ACL-2 | `universalCall` initiator must be nftOwner or protocolManager — no third party can be passed as initiator |
+| ACL-3 | Every `VaultState` setter is gated by `onlyVaultCore` — no direct external mutation |
+| ACL-4 | `deposit`, `absorbSurplus`, `addWbtcAsDeposit` callable only by nftOwner |
+| ACL-5 | `withdrawManagerFeeShares` callable only by protocolManager |
+| ACL-6 | Extension handler slots set to `address(0)` cannot be exploited (EVM cannot have `msg.sender == 0`) |
+
+## Handler Replacement
+
+| ID | Invariant |
+|----|-----------|
+| GOV-1 | Manager alone cannot replace a handler — nftOwner must accept |
+| GOV-2 | NftOwner alone cannot propose a handler — manager must propose |
+| GOV-3 | Only one proposal stored at a time — accepting a stale proposal after overwrite must not be possible |
+| GOV-4 | After `acceptHandler`, the new handler immediately gains `delegatecall` privilege |
+| GOV-5 | Deadman switch activates only after `MANAGER_DEADMAN_BLOCKS` (~1 year) of manager inactivity |
+| GOV-6 | Same propose/accept pattern holds for `basaltMath`/`basaltState` replacement |
+
+## LTV Hard Cap
+
+| ID | Invariant |
+|----|-----------|
+| LTV-1 | Deposit (Standard branch) reverts if projected LTV > `MAX_POST_DEPOSIT_LTV_BPS` (7000) |
+| LTV-2 | Rebalance reverts if post-rebalance LTV > `MAX_SAFE_LTV_BPS` (7000) |
+| LTV-3 | Target LTV setter rejects values above `MAX_TARGET_LTV_BPS` (5200) |
+| LTV-4 | Deposit branches 1-3 use target LTV (max 5200) — verify no edge case can push above 7000 |
+| LTV-5 | No post-finalize LTV re-check — confirm Dolomite liquidation engine serves as backstop |
+
+## Manager / Holder Separation
+
+| ID | Invariant |
+|----|-----------|
+| SEP-1 | `ownerEligible + managerFee <= totalShares` for all NAV/fee combinations including edge cases |
+| SEP-2 | Manager cannot call `withdraw` (user path) — `onlyVaultNftOwner` enforced |
+| SEP-3 | Holder cannot call `withdrawManagerFeeShares` — `requireProtocolManager` enforced |
+| SEP-4 | HWM only increases — repeated `accrueManagerFee` calls cannot inflate fee |
+| SEP-5 | Manager slippage bounded by `rebalanceSlippageCapBps` (1-10%) — sandwich within bounds only |
+| SEP-6 | After deadman switch, holder gains manager powers — verify no path to skip fee deduction |
+| SEP-7 | `_recordWithdrawnUsdByPolicy` with `isManagerFee=true` unreachable from holder's `withdraw` |
