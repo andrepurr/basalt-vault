@@ -1020,25 +1020,25 @@ BasaltGmUnwrapper:        ZeroAddress, ZeroAmount, MissingExecutionFee,
 
 ---
 
-## 9. Deployed Addresses (Arbitrum One, Deployment 5 — 2026-05-08)
+## 9. Deployed Addresses (Arbitrum One, Deployment 6 — 2026-05-08)
 
 | Contract | Address |
 |---|---|
-| BasaltMath | `0x61a9b80a6028b349c9126536ab91edce5a9798e1` |
-| DepositHandler | `0x3e3de674d1d743b7c53cceb5225fadaea0268907` |
-| WithdrawHandler | `0x2dbe0255c0fa49feb1a14264f0a8775e03558be2` |
-| ManagerHandler | `0xc84aa200c1feb4a820cd1a2c237172ab9ff83adb` |
-| AsyncRecoveryHandler | `0xa03649bc8687c7fb8ed28353da6fe2725ed463ed` |
-| FeeAccountingHandler | `0x52683e67075b27343c32e48129d394db487849b7` |
-| VaultCore (impl) | `0x29b9f07e4efb570d7a41dcfb29d70b1e519d1051` |
-| VaultState (impl) | `0xc20c82b5d7d0c3b72f5a9b6a1072c1280bd8b3fa` |
-| InitialCoreAddressBook | `0xe529ec9b8168176c5d0171bb911f469d14ceedc3` |
-| FeeSplitter | `0xed5be9f3aa5c757eb819f32b5e2e80a068449bc6` |
-| ManagerContract | `0x136674a24716c2b03752ab4058e8ad9ef5bae36d` |
-| VaultCoreNftFactory | `0xa1ba8dc91211aaf2ddf45bbd05f88c8632e8ac83` |
-| BasaltZapIn | `0xe1bea69cdce82b2104c5e4f74fa9482f10327003` |
-| BasaltZapOut | `0x5bfae38c57d23747c8829844443f5f02366b1d6a` |
-| BasaltGmUnwrapper | `0xb295a2347760787e04369f268a7f31382d77f58d` |
+| BasaltMath | `0xbbfce8b98bd817fe2059a227c32ae086b4ed0c11` |
+| DepositHandler | `0xf41150e3800f81b2a7987cf7dc84852855d669d6` |
+| WithdrawHandler | `0x73e9395d046fbe5b8ae6bcdb4c5304bb974d1520` |
+| ManagerHandler | `0xbc5150333eede35f511f0fca17b02a99fe29fec3` |
+| AsyncRecoveryHandler | `0xa430d5d60d1bcb29e7e8a0a8663e644bb377fe72` |
+| FeeAccountingHandler | `0x32ccb39393427801483226531be02eaf4284d6ce` |
+| VaultCore (impl) | `0x8cc187846e3bee690cbb37c431701c4c587550f1` |
+| VaultState (impl) | `0x9be65dfdb5a108151af95524072420d5c2075ddf` |
+| InitialCoreAddressBook | `0xcd2f28939e4b9f4d2af772137396ec42ad6d8143` |
+| FeeSplitter | `0x807bc93a1a3336572b4d43065baae5bb87c5bc20` |
+| ManagerContract | `0x638505776382d471091f9bb8301118023d6dabb3` |
+| VaultCoreNftFactory | `0x08e466fb09617d16ed27da9ea43ba601665f3b89` |
+| BasaltZapIn | `0x1236384c4614c0ccc463e1ead98cb896ca2c9e87` |
+| BasaltZapOut | `0x69a445d1950b053fe70a2c48a5925ab0848dd47a` |
+| BasaltGmUnwrapper | `0x6c5dd45766b996aeeeb5d311d79e8d0e4c44ed98` |
 
 ---
 

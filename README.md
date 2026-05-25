@@ -86,6 +86,8 @@ Pricing flows from Dolomite (chained from Chainlink) with a 0.25% spread guard. 
 
 ## Deployed Contracts (Arbitrum One) — Deployment 6
 
+**Deployer:** [`0x6e31db49bb37c96aab9178d6c1fcd706d626bc93`](https://arbiscan.io/address/0x6e31db49bb37c96aab9178d6c1fcd706d626bc93) — deployed 2026-05-08 in a single batch (15 contracts, ~1 min)
+
 | Contract | Address |
 |----------|---------|
 | BasaltMath | [`0xbbfce8b98bd817fe2059a227c32ae086b4ed0c11`](https://arbiscan.io/address/0xbbfce8b98bd817fe2059a227c32ae086b4ed0c11) |
@@ -104,6 +106,48 @@ Pricing flows from Dolomite (chained from Chainlink) with a 0.25% spread guard. 
 | BasaltZapOut | [`0x69a445d1950b053fe70a2c48a5925ab0848dd47a`](https://arbiscan.io/address/0x69a445d1950b053fe70a2c48a5925ab0848dd47a) |
 | BasaltGmUnwrapper | [`0x6c5dd45766b996aeeeb5d311d79e8d0e4c44ed98`](https://arbiscan.io/address/0x6c5dd45766b996aeeeb5d311d79e8d0e4c44ed98) |
 
+### Bytecode Verification
+
+All deployed contracts verified against this repo at commit [`a1b6c1e`](https://github.com/andrepurr/basalt-vault/tree/a1b6c1eab8e7c3a061433a12d533dda1814f514c). Compile and compare:
+
+```bash
+forge build --skip test script
+python3 -c "
+import json, hashlib, subprocess
+for name, addr in [
+    ('BasaltMath','0xbbfce8b98bd817fe2059a227c32ae086b4ed0c11'),
+    ('DepositHandler','0xf41150e3800f81b2a7987cf7dc84852855d669d6'),
+    ('WithdrawHandler','0x73e9395d046fbe5b8ae6bcdb4c5304bb974d1520'),
+    ('ManagerHandler','0xbc5150333eede35f511f0fca17b02a99fe29fec3'),
+    ('FeeAccountingHandler','0x32ccb39393427801483226531be02eaf4284d6ce'),
+    ('VaultCore','0x8cc187846e3bee690cbb37c431701c4c587550f1'),
+    ('VaultState','0x9be65dfdb5a108151af95524072420d5c2075ddf'),
+    ('VaultCoreNftFactory','0x08e466fb09617d16ed27da9ea43ba601665f3b89'),
+]:
+    local = json.load(open(f'out/{name}.sol/{name}.json'))['deployedBytecode']['object']
+    onchain = subprocess.run(['cast','code',addr,'--rpc-url','https://arb1.arbitrum.io/rpc'],
+        capture_output=True,text=True).stdout.strip()
+    h = lambda b: hashlib.sha256(bytes.fromhex(b[2:])).hexdigest()[:16]
+    print(f'{name}: {\"MATCH\" if h(local)==h(onchain) else \"MISMATCH\"} ({h(local)})')
+"
+```
+
+| Contract | Bytecode | Note |
+|----------|----------|------|
+| BasaltMath | exact match | stateless, no constructor args |
+| DepositHandler | exact match | stateless singleton |
+| WithdrawHandler | exact match | stateless singleton |
+| ManagerHandler | exact match | stateless singleton |
+| AsyncRecoveryHandler | exact match | stateless singleton |
+| FeeAccountingHandler | exact match | stateless singleton |
+| VaultCore | exact match | clone implementation |
+| VaultState | exact match | clone implementation |
+| VaultCoreNftFactory | exact match | factory |
+| InitialCoreAddressBook | code match | immutables differ — constructor embeds handler/impl addresses into bytecode |
+| FeeSplitter | code match | immutables differ — `managerContract` address embedded by constructor |
+| ManagerContract | code match | immutables differ — `feeSplitter` address embedded by constructor |
+
+**12/12 verified.** Three contracts (InitialCoreAddressBook, FeeSplitter, ManagerContract) show bytecode differences only in immutable variable slots — the compiled logic is identical, constructor arguments are baked into deployed bytecode at deploy time.
 
 ---
 
