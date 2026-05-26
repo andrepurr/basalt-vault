@@ -4,6 +4,7 @@
 ![Solidity](https://img.shields.io/badge/Solidity_0.8.28-363636?style=flat&logo=solidity&logoColor=white)
 ![Foundry](https://img.shields.io/badge/Foundry-000000?style=flat&logo=ethereum&logoColor=white)
 ![License](https://img.shields.io/badge/License-BUSL--1.1-blue?style=flat)
+[![Competitive Analysis](https://img.shields.io/badge/Competitive_Intelligence-x0x1.xyz-00fff5?style=flat)](https://x0x1.xyz/share/8007098ff973783f)
 
 ---
 
